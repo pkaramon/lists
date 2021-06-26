@@ -1,8 +1,10 @@
 import Clock from "./Clock";
+import NumberId from "../fakes/NumberId";
 import User from "./User";
 import ValidationError from "./ValidationError";
 
 const validData = {
+  id: new NumberId(1),
   email: "bob123@mail.com",
   name: "bob123",
   password: "pass@!123",
@@ -17,7 +19,6 @@ beforeAll(() => {
   };
   Clock.inst = fakeClock;
 });
-
 function givenUserDataExpectErrorMsgToBe(
   userData: Partial<typeof validData>,
   errorMessage: string
@@ -29,10 +30,6 @@ function givenUserDataExpectErrorMsgToBe(
     expect(e instanceof ValidationError).toBe(true);
     expect(e.message).toBe(errorMessage);
   }
-
-  // expect(() => new User({ ...validData, ...userData })).toThrowError(
-  //   errorMessage
-  // );
 }
 
 function givenUserDataExpectNotToThrow(userData: Partial<typeof validData>) {
@@ -76,6 +73,7 @@ describe("validation", () => {
 
 it("should create a user", () => {
   const u = new User(validData);
+  expect(u.id.equals(new NumberId(1))).toBe(true);
   expect(u.name).toBe(validData.name);
   expect(u.email).toBe(validData.email);
   expect(u.password).toBe(validData.password);

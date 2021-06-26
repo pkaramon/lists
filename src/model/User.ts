@@ -1,10 +1,12 @@
 import Clock from "./Clock";
 import EmailValidator from "./EmailValidator";
+import Id from "./Id";
 import ValidationError from "./ValidationError";
 
 export default class User {
   constructor(
     private data: {
+      id: Id;
       name: string;
       email: string;
       password: string;
@@ -12,6 +14,10 @@ export default class User {
     }
   ) {
     this.validateData();
+  }
+
+  get id() {
+    return this.data.id;
   }
 
   get name() {
