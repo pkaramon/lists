@@ -5,6 +5,8 @@ import buildAddUser from "./AddUser";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import FakeHasher from "../../fakes/FakeHasher";
+import { DatabaseError } from "../UserDb";
+import ServerError from "../ServerError";
 
 const hasher = new FakeHasher();
 Clock.inst = {
@@ -68,4 +70,16 @@ test("return value", async () => {
   expect(res.userId).toEqual(new NumberId(2));
 });
 
-test("unexpected database error", () => {});
+test("unexpected database error", async () => {
+  const throwDbError = () => {
+    throw new DatabaseError("db error");
+  };
+  userDb.save = userDb.getById = userDb.getByEmail = throwDbError;
+  try {
+    await new AddUser(userData).execute();
+    fail("should have failed");
+  } catch (e) {
+    expect(e instanceof ServerError).toBe(true);
+    expect(e.message).toBe("server error");
+  }
+});

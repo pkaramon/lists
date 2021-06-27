@@ -1,7 +1,8 @@
 import Id from "../../model/Id";
 import User from "../../model/User";
 import Hasher from "../Hasher";
-import UserDb from "../UserDb";
+import ServerError from "../ServerError";
+import UserDb, { DatabaseError, NotFoundError } from "../UserDb";
 
 export interface IdCreator {
   create(): Id;
@@ -27,11 +28,10 @@ export default function buildAddUser({
     ) {}
 
     async execute() {
-      if (await this.isEmailAlreadyTaken()) {
+      if (await this.isEmailAlreadyTaken())
         throw new Error("email is already taken");
-      }
       const user = await this.createUser();
-      await userDb.save(user);
+      await this.saveUser(user);
       return { userId: user.id };
     }
 
@@ -45,13 +45,26 @@ export default function buildAddUser({
       });
     }
 
+    private async saveUser(user: User) {
+      try {
+        await userDb.save(user);
+      } catch (e) {
+        if (e instanceof DatabaseError) this.throwServerError();
+      }
+    }
+
     private async isEmailAlreadyTaken() {
       try {
         await userDb.getByEmail(this.data.email);
         return true;
-      } catch {
-        return false;
+      } catch (e) {
+        if (e instanceof NotFoundError) return false;
+        else if (e instanceof DatabaseError) this.throwServerError();
       }
+    }
+
+    private throwServerError(): never {
+      throw new ServerError("server error");
     }
   };
 }
