@@ -1,4 +1,4 @@
-import Id from "../model/Id";
+import Id from "../domain/Id";
 
 export default class NumberId implements Id {
   constructor(private n: number) {}

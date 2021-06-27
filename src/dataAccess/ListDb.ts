@@ -1,5 +1,5 @@
-import Id from "../model/Id";
-import List from "../model/List";
+import Id from "../domain/Id";
+import List from "../domain/List";
 
 export default interface ListDb {
   save(list: List): Promise<void>;

@@ -1,8 +1,9 @@
-import Id from "../../model/Id";
-import User from "../../model/User";
+import NotFoundError from "../../dataAccess/NotFoundError";
+import UserDb from "../../dataAccess/UserDb";
+import Id from "../../domain/Id";
+import User from "../../domain/User";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
-import UserDb, { NotFoundError } from "../UserDb";
 
 export interface TokenCreator {
   create(userId: Id): Promise<string>;

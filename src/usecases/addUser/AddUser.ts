@@ -1,8 +1,10 @@
-import Id from "../../model/Id";
-import User from "../../model/User";
+import DatabaseError from "../../dataAccess/DatabaseError";
+import NotFoundError from "../../dataAccess/NotFoundError";
+import UserDb from "../../dataAccess/UserDb";
+import Id from "../../domain/Id";
+import User from "../../domain/User";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
-import UserDb, { DatabaseError, NotFoundError } from "../UserDb";
 
 export interface IdCreator {
   create(): Id;

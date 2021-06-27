@@ -4,13 +4,13 @@ import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
-import Clock from "../../model/Clock";
-import Id from "../../model/Id";
+import Clock from "../../domain/Clock";
+import Id from "../../domain/Id";
 import buildAddUser from "../addUser/AddUser";
-import ListDb from "../ListDb";
+import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
-import { DatabaseError } from "../UserDb";
 import buildAddList from "./AddList";
+import DatabaseError from "../../dataAccess/DatabaseError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let userDb: UserDbMemory;

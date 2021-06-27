@@ -1,6 +1,7 @@
-import Id from "../model/Id";
-import User from "../model/User";
-import UserDb, { NotFoundError } from "../usecases/UserDb";
+import NotFoundError from "../dataAccess/NotFoundError";
+import UserDb from "../dataAccess/UserDb";
+import Id from "../domain/Id";
+import User from "../domain/User";
 
 export default class UserDbMemory implements UserDb {
   private users = new Map<string | number, User>();

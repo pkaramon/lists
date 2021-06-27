@@ -1,4 +1,4 @@
-import Id from "../model/Id";
+import Id from "../domain/Id";
 import { TokenCreator } from "../usecases/login/Login";
 
 export default class FakeTokenCreator implements TokenCreator {

@@ -4,11 +4,12 @@ import FakeTokenCreator from "../../fakes/FakeTokenCreator";
 import NumberId from "../../fakes/NumberId";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
-import Clock from "../../model/Clock";
+import Clock from "../../domain/Clock";
 import buildAddUser, { IdCreator } from "../addUser/AddUser";
 import ServerError from "../ServerError";
-import UserDb, { DatabaseError } from "../UserDb";
 import buildLogin from "./Login";
+import DatabaseError from "../../dataAccess/DatabaseError";
+import UserDb from "../../dataAccess/UserDb";
 
 const hasher = new FakeHasher();
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });

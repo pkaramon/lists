@@ -1,13 +1,13 @@
-import Clock from "../../model/Clock";
-import NumberId from "../../fakes/NumberId";
-import ValidationError from "../../model/ValidationError";
-import buildAddUser from "./AddUser";
-import NumberIdCreator from "../../fakes/NumberIdCreator";
-import FakeHasher from "../../fakes/FakeHasher";
-import { DatabaseError } from "../UserDb";
-import ServerError from "../ServerError";
-import UserDbMemory from "../../fakes/UserDbMemory";
+import DatabaseError from "../../dataAccess/DatabaseError";
+import Clock from "../../domain/Clock";
+import ValidationError from "../../domain/ValidationError";
 import FakeClock from "../../fakes/FakeClock";
+import FakeHasher from "../../fakes/FakeHasher";
+import NumberId from "../../fakes/NumberId";
+import NumberIdCreator from "../../fakes/NumberIdCreator";
+import UserDbMemory from "../../fakes/UserDbMemory";
+import ServerError from "../ServerError";
+import buildAddUser from "./AddUser";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const hasher = new FakeHasher();

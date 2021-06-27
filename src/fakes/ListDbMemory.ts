@@ -1,7 +1,7 @@
-import Id from "../model/Id";
-import List from "../model/List";
-import ListDb from "../usecases/ListDb";
-import { NotFoundError } from "../usecases/UserDb";
+import Id from "../domain/Id";
+import List from "../domain/List";
+import ListDb from "../dataAccess/ListDb";
+import NotFoundError from "../dataAccess/NotFoundError";
 
 export default class ListDbMemory implements ListDb {
   lists = new Map<string | number, List>();
