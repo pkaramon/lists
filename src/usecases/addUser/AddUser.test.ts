@@ -1,10 +1,10 @@
-import Clock from "../model/Clock";
-import NumberId from "../fakes/NumberId";
-import ValidationError from "../model/ValidationError";
+import Clock from "../../model/Clock";
+import NumberId from "../../fakes/NumberId";
+import ValidationError from "../../model/ValidationError";
 import buildAddUser from "./AddUser";
-import NumberIdCreator from "../fakes/NumberIdCreator";
-import UserDbMemory from "../fakes/UserDbMemory";
-import FakeHasher from "../fakes/FakeHasher";
+import NumberIdCreator from "../../fakes/NumberIdCreator";
+import UserDbMemory from "../../fakes/UserDbMemory";
+import FakeHasher from "../../fakes/FakeHasher";
 
 const userDb = new UserDbMemory();
 const hasher = new FakeHasher();

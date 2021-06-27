@@ -1,4 +1,4 @@
-import { IdCreator } from "../addUser/AddUser";
+import { IdCreator } from "../usecases/addUser/AddUser";
 import NumberId from "./NumberId";
 
 export default class NumberIdCreator implements IdCreator {

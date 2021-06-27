@@ -1,18 +1,10 @@
-import Id from "../model/Id";
-import User from "../model/User";
+import Id from "../../model/Id";
+import User from "../../model/User";
+import Hasher from "../Hasher";
+import UserDb from "../UserDb";
 
 export interface IdCreator {
   create(): Id;
-}
-
-export interface UserDb {
-  save(u: User): Promise<void>;
-  getById(id: Id): Promise<User>;
-  getByEmail(email: string): Promise<User>;
-}
-
-export interface Hasher {
-  hash(str: string): Promise<string>;
 }
 
 export default function buildAddUser({
