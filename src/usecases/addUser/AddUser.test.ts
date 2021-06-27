@@ -6,29 +6,27 @@ import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import FakeHasher from "../../fakes/FakeHasher";
 
-const userDb = new UserDbMemory();
 const hasher = new FakeHasher();
+Clock.inst = {
+  now: () => new Date("2020-01-01"),
+};
+let userDb: UserDbMemory;
 let AddUser: ReturnType<typeof buildAddUser>;
 
 beforeEach(() => {
-  userDb.clear();
+  userDb = new UserDbMemory();
   AddUser = buildAddUser({ idCreator: new NumberIdCreator(), userDb, hasher });
 });
-beforeAll(() => {
-  Clock.inst = {
-    now: () => new Date("2020-01-01"),
-  };
-});
 
-const validUserData = {
+const userData = {
   name: "Bob",
   email: "bob@mail.com",
   birthDate: new Date("2000-01-01"),
   password: "STRONG_PASSWORD",
 };
 
-it("when validation fails it rethrows the error", async () => {
-  const addUser = new AddUser({ ...validUserData, email: "NOT AN EMAIL" });
+test("invalid data", async () => {
+  const addUser = new AddUser({ ...userData, email: "NOT AN EMAIL" });
   try {
     await addUser.execute();
     fail("should have thrown");
@@ -38,12 +36,12 @@ it("when validation fails it rethrows the error", async () => {
   }
 });
 
-it("throws an error if the email is not unique", async () => {
-  await new AddUser(validUserData).execute();
+test("email is not unique", async () => {
+  await new AddUser(userData).execute();
   try {
     await new AddUser({
       name: "Tom",
-      email: validUserData.email,
+      email: userData.email,
       birthDate: new Date("2001-02-02"),
       password: "PASSWORD123321",
     }).execute();
@@ -53,19 +51,21 @@ it("throws an error if the email is not unique", async () => {
   }
 });
 
-it("should save created user to the database", async () => {
-  await new AddUser(validUserData).execute();
+test("data is correct", async () => {
+  await new AddUser(userData).execute();
   const user = await userDb.getById(new NumberId(1));
-  expect(user.email).toBe(validUserData.email);
-  expect(user.name).toBe(validUserData.name);
-  expect(user.birthDate).toStrictEqual(validUserData.birthDate);
-  expect(user.password).toBe(await hasher.hash(validUserData.password));
+  expect(user.email).toBe(userData.email);
+  expect(user.name).toBe(userData.name);
+  expect(user.birthDate).toStrictEqual(userData.birthDate);
+  expect(user.password).toBe(await hasher.hash(userData.password));
   expect(user.id).toEqual(new NumberId(1));
 });
 
-it("returns id of newly created user", async () => {
-  let res = await new AddUser(validUserData).execute();
+test("return value", async () => {
+  let res = await new AddUser(userData).execute();
   expect(res.userId).toEqual(new NumberId(1));
-  res = await new AddUser({ ...validUserData, email: "t@mail.com" }).execute();
+  res = await new AddUser({ ...userData, email: "t@mail.com" }).execute();
   expect(res.userId).toEqual(new NumberId(2));
 });
+
+test("unexpected database error", () => {});

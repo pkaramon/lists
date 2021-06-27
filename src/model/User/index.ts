@@ -1,7 +1,7 @@
-import Clock from "./Clock";
-import EmailValidator from "./EmailValidator";
-import Id from "./Id";
-import ValidationError from "./ValidationError";
+import Clock from "../Clock";
+import EmailValidator from "../EmailValidator";
+import Id from "../Id";
+import ValidationError from "../ValidationError";
 
 export default class User {
   constructor(
@@ -45,9 +45,8 @@ export default class User {
 
   private validateName() {
     const name = this.data.name.trim();
-    if (name.length < 2) {
+    if (name.length < 2)
       throw new ValidationError("name must be at least 2 characters long");
-    }
   }
 
   private validateEmail() {

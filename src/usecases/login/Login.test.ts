@@ -1,3 +1,4 @@
+import FakeClock from "../../fakes/FakeClock";
 import FakeHasher from "../../fakes/FakeHasher";
 import FakeTokenCreator from "../../fakes/FakeTokenCreator";
 import NumberId from "../../fakes/NumberId";
@@ -10,7 +11,7 @@ import UserDb, { DatabaseError } from "../UserDb";
 import buildLogin from "./Login";
 
 const hasher = new FakeHasher();
-Clock.inst = { now: () => new Date("2020-01-01") };
+Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const tokenCreator = new FakeTokenCreator();
 let userDb: UserDb;
 let idCreator: IdCreator;

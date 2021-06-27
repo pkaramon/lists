@@ -1,7 +1,7 @@
-import Clock from "./Clock";
-import NumberId from "../fakes/NumberId";
-import User from "./User";
-import ValidationError from "./ValidationError";
+import User from ".";
+import NumberId from "../../fakes/NumberId";
+import Clock from "../Clock";
+import ValidationError from "../ValidationError";
 
 const validData = {
   id: new NumberId(1),
