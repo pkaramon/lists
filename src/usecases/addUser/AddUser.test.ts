@@ -3,21 +3,24 @@ import NumberId from "../../fakes/NumberId";
 import ValidationError from "../../model/ValidationError";
 import buildAddUser from "./AddUser";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
-import UserDbMemory from "../../fakes/UserDbMemory";
 import FakeHasher from "../../fakes/FakeHasher";
 import { DatabaseError } from "../UserDb";
 import ServerError from "../ServerError";
+import UserDbMemory from "../../fakes/UserDbMemory";
+import FakeClock from "../../fakes/FakeClock";
 
+Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const hasher = new FakeHasher();
-Clock.inst = {
-  now: () => new Date("2020-01-01"),
-};
 let userDb: UserDbMemory;
 let AddUser: ReturnType<typeof buildAddUser>;
 
 beforeEach(() => {
   userDb = new UserDbMemory();
-  AddUser = buildAddUser({ idCreator: new NumberIdCreator(), userDb, hasher });
+  AddUser = buildAddUser({
+    idCreator: new NumberIdCreator(),
+    userDb,
+    hasher,
+  });
 });
 
 const userData = {
