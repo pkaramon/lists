@@ -1,7 +1,9 @@
 import Id from "../Id";
+import ListItem from "../ListItem";
 import ValidationError from "../ValidationError";
 
 export default class List {
+  private _listItems: ListItem[] = [];
   constructor(
     private data: { id: Id; authorId: Id; title: string; description: string }
   ) {
@@ -23,6 +25,14 @@ export default class List {
 
   get description() {
     return this.data.description;
+  }
+
+  get listItems() {
+    return this._listItems;
+  }
+
+  addListItem(listItem: ListItem) {
+    this._listItems.push(listItem);
   }
 
   private cleanData() {
