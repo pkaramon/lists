@@ -13,6 +13,7 @@ export default class User {
       birthDate: Date;
     }
   ) {
+    this.trimStrings();
     this.validateData();
   }
 
@@ -36,6 +37,15 @@ export default class User {
     return new Date(this.data.birthDate);
   }
 
+  private trimStrings() {
+    this.data = {
+      ...this.data,
+      name: this.data.name.trim(),
+      email: this.data.email.trim(),
+      password: this.data.password.trim(),
+    };
+  }
+
   private validateData() {
     this.validateName();
     this.validateEmail();
@@ -44,8 +54,7 @@ export default class User {
   }
 
   private validateName() {
-    const name = this.data.name.trim();
-    if (name.length < 2)
+    if (this.data.name.length < 2)
       throw new ValidationError("name must be at least 2 characters long");
   }
 
@@ -55,8 +64,7 @@ export default class User {
   }
 
   private validatePassword() {
-    const password = this.data.password.trim();
-    if (password.length < 8)
+    if (this.data.password.length < 8)
       throw new ValidationError("password must contain at least 8 characters");
   }
 

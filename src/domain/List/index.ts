@@ -31,8 +31,16 @@ export default class List {
     return this._listItems;
   }
 
+  get length() {
+    return this._listItems.length;
+  }
+
   addListItem(listItem: ListItem) {
     this._listItems.push(listItem);
+  }
+
+  removeListItemAt(index: number) {
+    this._listItems.splice(index, 1)
   }
 
   private cleanData() {
