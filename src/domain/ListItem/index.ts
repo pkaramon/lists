@@ -8,4 +8,6 @@ export default abstract class ListItem {
   changeTitle(newTitle: string) {
     this._title = newTitle;
   }
+
+  abstract toDataObject(): any;
 }

@@ -8,4 +8,11 @@ export default class DetailedListItem extends ListItem {
   get description() {
     return this._description;
   }
+
+  toDataObject() {
+    return {
+      title: this.title,
+      description: this._description,
+    };
+  }
 }

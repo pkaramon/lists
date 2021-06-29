@@ -31,6 +31,10 @@ export default class List {
     return this._listItems.length;
   }
 
+  [Symbol.iterator]() {
+    return this._listItems[Symbol.iterator]();
+  }
+
   addListItem(listItem: ListItem) {
     this._listItems.push(listItem);
   }
