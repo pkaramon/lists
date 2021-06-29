@@ -48,13 +48,13 @@ describe("adding different types of listItems", () => {
   ) {
     const saveSpy = jest.spyOn(listDb, "save");
     let list = await listDb.getById(new NumberId(1));
-    expect(list.listItems.length).toBe(0);
+    expect(list.length).toBe(0);
 
     await new AddListItem(addListItemData).execute();
     list = await listDb.getById(new NumberId(1));
-    expect(list.listItems.length).toBe(1);
+    expect(list.length).toBe(1);
 
-    const listItem = list.listItems[0];
+    const listItem = list.getListItemAt(0);
     additionalExpectations(listItem);
 
     expect(saveSpy).toHaveBeenCalledWith(list);
@@ -137,9 +137,9 @@ test("adding multiple list items", async () => {
     listItem: { type: "text", title: "hello" },
   }).execute();
 
-  const listItems = (await listDb.getById(new NumberId(1))).listItems;
-  const first = listItems[0] as DetailedListItem;
-  const second = listItems[1] as TextListItem;
+  const list = await listDb.getById(new NumberId(1));
+  const first = list.getListItemAt(0) as DetailedListItem;
+  const second = list.getListItemAt(1) as TextListItem;
 
   expect(first.title).toBe("abc");
   expect(first.description).toBe("def");

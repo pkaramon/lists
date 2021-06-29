@@ -27,10 +27,6 @@ export default class List {
     return this.data.description;
   }
 
-  get listItems() {
-    return this._listItems;
-  }
-
   get length() {
     return this._listItems.length;
   }
@@ -40,7 +36,18 @@ export default class List {
   }
 
   removeListItemAt(index: number) {
-    this._listItems.splice(index, 1)
+    this.validateIndex(index);
+    this._listItems.splice(index, 1);
+  }
+
+  getListItemAt(index: number) {
+    this.validateIndex(index);
+    return this._listItems[index];
+  }
+
+  private validateIndex(index: number) {
+    if (index < 0 || index >= this.length || !Number.isInteger(index))
+      throw new RangeError(`invalid index: ${index}`);
   }
 
   private cleanData() {

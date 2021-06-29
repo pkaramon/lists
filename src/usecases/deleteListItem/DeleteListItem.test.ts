@@ -80,8 +80,8 @@ test("deleting listitem", async () => {
 
   const list = await listDb.getById(new NumberId(1));
   expect(list.length).toBe(2);
-  expect((list.listItems[0] as TextListItem).title).toBe("first");
-  expect((list.listItems[1] as TextListItem).title).toBe("third");
+  expect((list.getListItemAt(0) as TextListItem).title).toBe("first");
+  expect((list.getListItemAt(1) as TextListItem).title).toBe("third");
   expect(saveSpy).toHaveBeenCalledWith(list);
 });
 

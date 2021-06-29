@@ -8,11 +8,10 @@ import ServerError from "../ServerError";
 export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
   return class DeleteListItem {
     constructor(private data: { listId: Id; listItemIndex: number }) {}
+
     async execute() {
       const list = (await this.getList())!;
-      const index = this.data.listItemIndex;
-      this.validateIndex(index, list);
-      list.removeListItemAt(index);
+      this.tryToRemoveListItem(list);
       await this.saveList(list);
     }
 
@@ -23,6 +22,17 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
         if (e instanceof NotFoundError) throw new Error("list not found");
         if (e instanceof DatabaseError)
           throw new ServerError("could not get the list");
+        throw e;
+      }
+    }
+
+    private tryToRemoveListItem(list: List) {
+      const i = this.data.listItemIndex;
+      try {
+        list.removeListItemAt(i);
+      } catch (e) {
+        if (e instanceof RangeError)
+          throw new Error(`no list item at index: ${i}`);
       }
     }
 
@@ -33,11 +43,6 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
         if (e instanceof DatabaseError)
           throw new ServerError("could not save the changes");
       }
-    }
-
-    private validateIndex(index: number, list: List) {
-      if (index < 0 || index >= list.length || !Number.isInteger(index))
-        throw new Error(`no list item at index: ${index}`);
     }
   };
 }
