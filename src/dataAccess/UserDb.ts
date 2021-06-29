@@ -5,4 +5,5 @@ export default interface UserDb {
   save(u: User): Promise<void>;
   getById(id: Id): Promise<User>;
   getByEmail(email: string): Promise<User>;
+  deleteById(id: Id): Promise<void>;
 }

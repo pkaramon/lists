@@ -30,15 +30,22 @@ const userData = {
   password: "STRONG_PASSWORD",
 };
 
-test("invalid data", async () => {
-  const addUser = new AddUser({ ...userData, email: "NOT AN EMAIL" });
-  try {
-    await addUser.execute();
-    fail("should have thrown");
-  } catch (e) {
-    expect(e instanceof ValidationError).toBe(true);
-    expect(e.message).toBe("email must be a valid email");
-  }
+describe("invalid data", () => {
+  test("invalid user data", async () => {
+    const fn = () =>
+      new AddUser({ ...userData, email: "NOT AN EMAIL" }).execute();
+    await expect(fn).rejects.toThrowError(ValidationError);
+    await expect(fn).rejects.toThrowError("email must be a valid email");
+  });
+
+  test("too short password (min=8 characters)", async () => {
+    const fn = () =>
+      new AddUser({ ...userData, password: "1234567" }).execute();
+    await expect(fn).rejects.toThrowError(ValidationError);
+    await expect(fn).rejects.toThrowError(
+      "password must contain at least 8 characters"
+    );
+  });
 });
 
 test("email is not unique", async () => {

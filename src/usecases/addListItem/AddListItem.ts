@@ -32,9 +32,9 @@ export default function buildAddListItem({
         return await listDb.getById(this.data.listId);
       } catch (e) {
         if (e instanceof NotFoundError) throw new Error("list not found");
-        if (e instanceof DatabaseError)
+        else if (e instanceof DatabaseError)
           throw new ServerError("could not get list");
-        throw e;
+        else throw e;
       }
     }
 

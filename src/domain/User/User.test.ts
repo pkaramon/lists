@@ -52,16 +52,6 @@ describe("validation", () => {
     givenUserDataExpectNotToThrow({ email: "bob123@gmail.com" });
   });
 
-  it("must contain a password longer than or equal to 8 characters", () => {
-    for (const password of ["", "a", "1234567", "         "])
-      givenUserDataExpectErrorMsgToBe(
-        { password },
-        "password must contain at least 8 characters"
-      );
-    givenUserDataExpectNotToThrow({ password: "abc@#1234" });
-    givenUserDataExpectNotToThrow({ password: "abc@#1234abc" });
-  });
-
   it("must contain a valid birthDate", () => {
     givenUserDataExpectErrorMsgToBe(
       { birthDate: new Date("2020-03-13") },

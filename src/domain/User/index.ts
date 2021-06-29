@@ -49,7 +49,6 @@ export default class User {
   private validateData() {
     this.validateName();
     this.validateEmail();
-    this.validatePassword();
     this.validateBirthDate();
   }
 
@@ -61,11 +60,6 @@ export default class User {
   private validateEmail() {
     if (!EmailValidator.validate(this.data.email))
       throw new ValidationError("email must be a valid email");
-  }
-
-  private validatePassword() {
-    if (this.data.password.length < 8)
-      throw new ValidationError("password must contain at least 8 characters");
   }
 
   private validateBirthDate() {

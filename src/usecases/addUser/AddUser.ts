@@ -3,6 +3,7 @@ import NotFoundError from "../../dataAccess/NotFoundError";
 import UserDb from "../../dataAccess/UserDb";
 import Id from "../../domain/Id";
 import User from "../../domain/User";
+import ValidationError from "../../domain/ValidationError";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
 
@@ -30,11 +31,25 @@ export default function buildAddUser({
     ) {}
 
     async execute() {
-      if (await this.isEmailAlreadyTaken())
-        throw new Error("email is already taken");
+      await this.checkIfEmailIsAlreadyUsed();
+      this.validatePassword();
+
       const user = await this.createUser();
       await this.saveUser(user);
       return { userId: user.id };
+    }
+
+    private async checkIfEmailIsAlreadyUsed() {
+      if (await this.isEmailAlreadyTaken())
+        throw new Error("email is already taken");
+    }
+
+    private validatePassword() {
+      const pass = this.data.password.trim();
+      if (pass.length < 8)
+        throw new ValidationError(
+          "password must contain at least 8 characters"
+        );
     }
 
     private async createUser() {
@@ -52,6 +67,7 @@ export default function buildAddUser({
         await userDb.save(user);
       } catch (e) {
         if (e instanceof DatabaseError) this.throwServerError();
+        else throw e;
       }
     }
 
@@ -62,6 +78,7 @@ export default function buildAddUser({
       } catch (e) {
         if (e instanceof NotFoundError) return false;
         else if (e instanceof DatabaseError) this.throwServerError();
+        else throw e;
       }
     }
 
