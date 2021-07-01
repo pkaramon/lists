@@ -22,8 +22,11 @@ export default function buildLogin({
     constructor(private data: { email: string; password: string }) {}
     async execute() {
       const user = await this.getUser();
-      if (await this.doPasswordsMatch(user)) this.throwInavlidDataError();
-      return { userToken: await tokenCreator.create(user.id) };
+      if (await this.doPasswordsMatch(user)) {
+        return { userToken: await tokenCreator.create(user.id) };
+      } else {
+        this.throwInavlidDataError();
+      }
     }
 
     private async getUser() {
@@ -41,7 +44,7 @@ export default function buildLogin({
     }
 
     private async doPasswordsMatch(user: User) {
-      return user.password !== (await hasher.hash(this.data.password));
+      return user.password === (await hasher.hash(this.data.password));
     }
 
     private throwInavlidDataError(): never {
