@@ -20,9 +20,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
         return await listDb.getById(this.data.listId);
       } catch (e) {
         if (e instanceof NotFoundError) throw new Error("list not found");
-        if (e instanceof DatabaseError)
-          throw new ServerError("could not get the list");
-        throw e;
+        else throw new ServerError("could not get the list");
       }
     }
 
@@ -42,6 +40,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
       } catch (e) {
         if (e instanceof DatabaseError)
           throw new ServerError("could not save the changes");
+        else throw new ServerError();
       }
     }
   };

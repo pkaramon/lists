@@ -6,7 +6,7 @@ import {
   expectErrorMessageToBe,
   expectDataToMatch,
 } from "../__test__/fixtures";
-import buildAddUserController from "./addUserController";
+import buildAddUserController from "./addUser";
 
 let addUserController: ReturnType<typeof buildAddUserController>;
 
