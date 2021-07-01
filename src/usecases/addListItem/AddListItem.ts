@@ -27,14 +27,12 @@ export default function buildAddListItem({
       await this.saveModifiedList(list);
     }
 
-    private async getList() {
+    private async getList(): Promise<List> {
       try {
         return await listDb.getById(this.data.listId);
       } catch (e) {
         if (e instanceof NotFoundError) throw new Error("list not found");
-        else if (e instanceof DatabaseError)
-          throw new ServerError("could not get list");
-        else throw e;
+        else throw new ServerError("could not get list");
       }
     }
 
@@ -42,8 +40,7 @@ export default function buildAddListItem({
       try {
         await listDb.save(list);
       } catch (e) {
-        if (e instanceof DatabaseError) throw new ServerError("could not save");
-        throw e;
+        throw new ServerError("could not save");
       }
     }
   };

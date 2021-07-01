@@ -20,6 +20,7 @@ export default function buildLogin({
 }) {
   return class Login {
     constructor(private data: { email: string; password: string }) {}
+
     async execute() {
       const user = await this.getUser();
       if (await this.doPasswordsMatch(user)) {
@@ -38,13 +39,13 @@ export default function buildLogin({
       }
     }
 
+    private async doPasswordsMatch(user: User) {
+      return user.password === (await hasher.hash(this.data.password));
+    }
+
     private handleError(e: Error): never {
       if (e instanceof NotFoundError) this.throwInavlidDataError();
       else throw new ServerError("server error");
-    }
-
-    private async doPasswordsMatch(user: User) {
-      return user.password === (await hasher.hash(this.data.password));
     }
 
     private throwInavlidDataError(): never {

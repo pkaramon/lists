@@ -52,7 +52,7 @@ export default function buildAddList({
       try {
         await listDb.save(list);
       } catch (e) {
-        if (e instanceof DatabaseError) throw new ServerError("server error");
+        throw new ServerError("server error");
       }
     }
   };

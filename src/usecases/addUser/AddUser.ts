@@ -44,6 +44,16 @@ export default function buildAddUser({
         throw new Error("email is already taken");
     }
 
+    private async isEmailAlreadyTaken() {
+      try {
+        await userDb.getByEmail(this.data.email);
+        return true;
+      } catch (e) {
+        if (e instanceof NotFoundError) return false;
+        else this.throwServerError();
+      }
+    }
+
     private validatePassword() {
       const pass = this.data.password.trim();
       if (pass.length < 8)
@@ -67,18 +77,6 @@ export default function buildAddUser({
         await userDb.save(user);
       } catch (e) {
         if (e instanceof DatabaseError) this.throwServerError();
-        else throw e;
-      }
-    }
-
-    private async isEmailAlreadyTaken() {
-      try {
-        await userDb.getByEmail(this.data.email);
-        return true;
-      } catch (e) {
-        if (e instanceof NotFoundError) return false;
-        else if (e instanceof DatabaseError) this.throwServerError();
-        else throw e;
       }
     }
 

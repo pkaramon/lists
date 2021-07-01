@@ -25,15 +25,6 @@ export default function buildChangeListItemTitle({
       await this.saveChanges(list);
     }
 
-    private async saveChanges(list: List) {
-      try {
-        await listDb.save(list);
-      } catch (e) {
-        if (e instanceof DatabaseError)
-          throw new Error("could not save changes");
-      }
-    }
-
     private async getList() {
       try {
         return await listDb.getById(this.data.listId);
@@ -49,9 +40,16 @@ export default function buildChangeListItemTitle({
       try {
         return list.getListItemAt(this.data.listItemIndex);
       } catch (e) {
-        if (e instanceof RangeError)
-          throw new Error(`no list item at index: ${this.data.listItemIndex}`);
-        else throw e;
+        throw new Error(`no list item at index: ${this.data.listItemIndex}`);
+      }
+    }
+
+    private async saveChanges(list: List) {
+      try {
+        await listDb.save(list);
+      } catch (e) {
+        if (e instanceof DatabaseError)
+          throw new Error("could not save changes");
       }
     }
   };

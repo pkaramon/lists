@@ -10,7 +10,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
     constructor(private data: { listId: Id; listItemIndex: number }) {}
 
     async execute() {
-      const list = (await this.getList())!;
+      const list = await this.getList();
       this.tryToRemoveListItem(list);
       await this.saveList(list);
     }
@@ -40,7 +40,6 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
       } catch (e) {
         if (e instanceof DatabaseError)
           throw new ServerError("could not save the changes");
-        else throw new ServerError();
       }
     }
   };
