@@ -6,6 +6,7 @@ import User from "../../domain/User";
 import ValidationError from "../../domain/ValidationError";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
+import EmailAlreadyTakenError from "./EmailAlreadyTakenError";
 
 export interface IdCreator {
   create(): Id;
@@ -33,15 +34,13 @@ export default function buildAddUser({
     async execute() {
       await this.checkIfEmailIsAlreadyUsed();
       this.validatePassword();
-
       const user = await this.createUser();
       await this.saveUser(user);
       return { userId: user.id };
     }
 
     private async checkIfEmailIsAlreadyUsed() {
-      if (await this.isEmailAlreadyTaken())
-        throw new Error("email is already taken");
+      if (await this.isEmailAlreadyTaken()) throw new EmailAlreadyTakenError();
     }
 
     private async isEmailAlreadyTaken() {

@@ -29,14 +29,13 @@ beforeEach(async () => {
       birthDate: new Date("2003-03-12"),
     })
   );
-  const LoginControllerClass = buildLoginController(
+  loginController = new (buildLoginController(
     buildLogin({
       userDb,
       hasher,
       tokenCreator: new FakeTokenCreator(),
     })
-  );
-  loginController = new LoginControllerClass();
+  ))();
 });
 
 test("invalid email or password", async () => {

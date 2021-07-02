@@ -2,6 +2,7 @@ import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import UseCaseClass from "../UseCaseClass";
 import FromSchema from "../validation/FromSchema";
+import InvalidLoginDataError from "./InvalidLoginDataError";
 
 export default function buildLoginController(
   Login: UseCaseClass<
@@ -23,7 +24,9 @@ export default function buildLoginController(
         const { userToken } = await new Login({ email, password }).execute();
         return new DataResponse(200, { token: userToken });
       } catch (e) {
-        return new ErrorResponse(400, e.message);
+        if (e instanceof InvalidLoginDataError)
+          return new ErrorResponse(400, "email or password is invalid");
+        else throw e;
       }
     }
   };

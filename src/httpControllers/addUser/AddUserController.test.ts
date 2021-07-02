@@ -1,5 +1,6 @@
 import FakeUseCase from "../../fakes/FakeUseCase";
 import NumberId from "../../fakes/NumberId";
+import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
 import ServerError from "../../usecases/ServerError";
 import {
   expectStatusCodeToBe,
@@ -21,24 +22,14 @@ const requestBody = {
   birthDate: new Date("2000-03-12"),
 };
 
-test("addUser throws oridinary error", async () => {
-  FakeUseCase.mockError(new Error("email is already taken"));
+test("addUser throws EmailAlreadyTakenError", async () => {
+  FakeUseCase.mockError(new EmailAlreadyTakenError());
   const response = await addUserController.handle({
     body: requestBody,
   });
 
   expectStatusCodeToBe(response, 400);
   expectErrorMessageToBe(response, "email is already taken");
-});
-
-test("addUser throws ServerError", async () => {
-  FakeUseCase.mockError(new ServerError("CRITICAL FAILURE"));
-  const response = await addUserController.handle({
-    body: requestBody,
-  });
-
-  expectStatusCodeToBe(response, 500);
-  expectErrorMessageToBe(response, "CRITICAL FAILURE");
 });
 
 test("successfully creating a user", async () => {

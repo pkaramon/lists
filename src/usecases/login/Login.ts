@@ -2,6 +2,7 @@ import NotFoundError from "../../dataAccess/NotFoundError";
 import UserDb from "../../dataAccess/UserDb";
 import Id from "../../domain/Id";
 import User from "../../domain/User";
+import InvalidLoginDataError from "../../httpControllers/login/InvalidLoginDataError";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
 
@@ -45,11 +46,11 @@ export default function buildLogin({
 
     private handleError(e: Error): never {
       if (e instanceof NotFoundError) this.throwInavlidDataError();
-      else throw new ServerError("server error");
+      else throw new ServerError();
     }
 
     private throwInavlidDataError(): never {
-      throw new Error("email or password is invalid");
+      throw new InvalidLoginDataError();
     }
   };
 }

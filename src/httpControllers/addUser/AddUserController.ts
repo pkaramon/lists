@@ -1,5 +1,5 @@
 import Id from "../../domain/Id";
-import ServerError from "../../usecases/ServerError";
+import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import UseCaseClass from "../UseCaseClass";
@@ -28,9 +28,9 @@ export default function buildAddUserController(
         const { userId } = await this.getResultFromAddUser(req.body);
         return new DataResponse(201, { userId: userId.toPrimitive() });
       } catch (e) {
-        return e instanceof ServerError
-          ? new ErrorResponse(500, e.message)
-          : new ErrorResponse(400, e.message);
+        if (e instanceof EmailAlreadyTakenError)
+          return new ErrorResponse(400, "email is already taken");
+        else throw e;
       }
     }
 

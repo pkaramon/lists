@@ -8,6 +8,7 @@ import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import ServerError from "../ServerError";
 import buildAddUser from "./AddUser";
+import EmailAlreadyTakenError from "./EmailAlreadyTakenError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const hasher = new FakeHasher();
@@ -50,17 +51,15 @@ describe("invalid data", () => {
 
 test("email is not unique", async () => {
   await new AddUser(userData).execute();
-  try {
-    await new AddUser({
+  const fn = () =>
+    new AddUser({
       name: "Tom",
       email: userData.email,
       birthDate: new Date("2001-02-02"),
       password: "PASSWORD123321",
     }).execute();
-    throw new Error("it should have thrown");
-  } catch (e) {
-    expect(e.message).toBe("email is already taken");
-  }
+
+  await expect(fn).rejects.toThrowError(EmailAlreadyTakenError);
 });
 
 test("data is correct", async () => {
