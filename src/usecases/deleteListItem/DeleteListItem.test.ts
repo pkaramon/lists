@@ -5,6 +5,7 @@ import TextListItem from "../../domain/ListItem/TextListItem";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
 import ServerError from "../ServerError";
+import UserNoAccessError from "../UserNoAccessError";
 import buildDeleteListItem from "./DeleteListItem";
 
 let listDb: ListDbMemory;
@@ -34,10 +35,21 @@ beforeEach(async () => {
   await listDb.save(emptyList);
 });
 
+test("user does not have access to the list", async () => {
+  const fn = () =>
+    new DeleteListItem({
+      userId: new NumberId(123),
+      listId: new NumberId(1),
+      listItemIndex: 0,
+    }).execute();
+
+  await expect(fn).rejects.toThrowError(UserNoAccessError);
+});
+
 test("list does not exist", async () => {
-  const DeleteListItem = buildDeleteListItem({ listDb });
   const fn = async () =>
     await new DeleteListItem({
+      userId: new NumberId(123),
       listId: new NumberId(100),
       listItemIndex: 0,
     }).execute();
@@ -49,6 +61,7 @@ test("listItemIndex is invalid", async () => {
   await expect(
     async () =>
       await new DeleteListItem({
+        userId: new NumberId(1),
         listId: new NumberId(1),
         listItemIndex: 3,
       }).execute()
@@ -57,6 +70,7 @@ test("listItemIndex is invalid", async () => {
   await expect(
     async () =>
       await new DeleteListItem({
+        userId: new NumberId(1),
         listId: new NumberId(2),
         listItemIndex: 0,
       }).execute()
@@ -65,6 +79,7 @@ test("listItemIndex is invalid", async () => {
   await expect(
     async () =>
       await new DeleteListItem({
+        userId: new NumberId(1),
         listId: new NumberId(2),
         listItemIndex: 3.14,
       }).execute()
@@ -74,6 +89,7 @@ test("listItemIndex is invalid", async () => {
 test("deleting listitem", async () => {
   const saveSpy = jest.spyOn(listDb, "save");
   await new DeleteListItem({
+    userId: new NumberId(1),
     listId: new NumberId(1),
     listItemIndex: 1,
   }).execute();
@@ -92,6 +108,7 @@ test("listDb save error", async () => {
 
   const fn = async () =>
     await new DeleteListItem({
+      userId: new NumberId(1),
       listId: new NumberId(1),
       listItemIndex: 1,
     }).execute();
@@ -107,6 +124,7 @@ test("listDb retrival error", async () => {
 
   const fn = async () =>
     await new DeleteListItem({
+      userId: new NumberId(1),
       listId: new NumberId(1),
       listItemIndex: 1,
     }).execute();

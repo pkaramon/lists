@@ -4,13 +4,17 @@ import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
 import ServerError from "../ServerError";
+import UserNoAccessError from "../UserNoAccessError";
 
 export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
   return class DeleteListItem {
-    constructor(private data: { listId: Id; listItemIndex: number }) {}
+    constructor(
+      private data: { userId: Id; listId: Id; listItemIndex: number }
+    ) {}
 
     async execute() {
       const list = await this.getList();
+      this.checkIfUserHasAccess(list);
       this.tryToRemoveListItem(list);
       await this.saveList(list);
     }
@@ -21,6 +25,12 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
       } catch (e) {
         if (e instanceof NotFoundError) throw new Error("list not found");
         else throw new ServerError("could not get the list");
+      }
+    }
+
+    private checkIfUserHasAccess(list: List) {
+      if (!list.isUserAllowed(this.data.userId)) {
+        throw new UserNoAccessError();
       }
     }
 

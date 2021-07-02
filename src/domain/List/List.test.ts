@@ -22,6 +22,12 @@ test("valid list data", () => {
   const list = new List(validData);
   expect(list.title).toBe("first title");
   expect(list.description).toBe("abc");
-  expect(list.id.equals(new NumberId(1))).toBe(true)
-  expect(list.authorId.equals(new NumberId(10))).toBe(true)
+  expect(list.id.equals(new NumberId(1))).toBe(true);
+  expect(list.authorId.equals(new NumberId(10))).toBe(true);
+});
+
+test("isUserAllowed", () => {
+  const list = new List(validData);
+  expect(list.isUserAllowed(validData.authorId)).toBe(true);
+  expect(list.isUserAllowed(new NumberId(123))).toBe(false);
 });

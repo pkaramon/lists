@@ -3,6 +3,7 @@ import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
+import UserNoAccessError from "../UserNoAccessError";
 
 export default function buildChangeListItemTitle({
   listDb,
@@ -12,6 +13,7 @@ export default function buildChangeListItemTitle({
   return class ChangeListItemTitle {
     constructor(
       private data: {
+        userId: Id;
         listId: Id;
         listItemIndex: number;
         title: string;
@@ -20,6 +22,7 @@ export default function buildChangeListItemTitle({
 
     async execute() {
       const list = await this.getList();
+      this.checkIfUserHasAccess(list);
       const listItem = this.getListItem(list);
       listItem.changeTitle(this.data.title);
       await this.saveChanges(list);
@@ -33,6 +36,12 @@ export default function buildChangeListItemTitle({
         else if (e instanceof DatabaseError)
           throw new Error("could not get the list");
         else throw e;
+      }
+    }
+
+    private checkIfUserHasAccess(list: List) {
+      if (!list.isUserAllowed(this.data.userId)) {
+        throw new UserNoAccessError();
       }
     }
 

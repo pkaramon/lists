@@ -5,6 +5,7 @@ import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
+import UserNoAccessError from "../UserNoAccessError";
 import buildChangeListItemTitle from "./ChangeListItemTitle";
 
 function getTestList() {
@@ -27,10 +28,23 @@ beforeEach(async () => {
   ChangeListItemTitle = buildChangeListItemTitle({ listDb });
 });
 
+test("user does not have acccess to the list(not an author)", async () => {
+  const fn = () =>
+    new ChangeListItemTitle({
+      listId: new NumberId(1),
+      userId: new NumberId(123),
+      listItemIndex: 0,
+      title: "new title",
+    }).execute();
+
+  await expect(fn).rejects.toThrow(UserNoAccessError);
+});
+
 test("list does not exist in db", async () => {
   const fn = () =>
     new ChangeListItemTitle({
       listId: new NumberId(123),
+      userId: new NumberId(101),
       listItemIndex: 0,
       title: "new title",
     }).execute();
@@ -42,6 +56,7 @@ test("list exists but list item at specified index does not", async () => {
   const fn = () =>
     new ChangeListItemTitle({
       listId: new NumberId(1),
+      userId: new NumberId(101),
       listItemIndex: 2,
       title: "new title",
     }).execute();
@@ -51,6 +66,7 @@ test("list exists but list item at specified index does not", async () => {
 test("changing title", async () => {
   const saveSpy = jest.spyOn(listDb, "save");
   await new ChangeListItemTitle({
+    userId: new NumberId(101),
     listId: new NumberId(1),
     listItemIndex: 0,
     title: "new title",
@@ -69,6 +85,7 @@ describe("listDb errors", () => {
   };
   const tryToChangeListItemTitle = () =>
     new ChangeListItemTitle({
+      userId: new NumberId(101),
       listId: new NumberId(1),
       listItemIndex: 0,
       title: "new title",

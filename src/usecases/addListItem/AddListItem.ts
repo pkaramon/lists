@@ -1,10 +1,10 @@
-import DatabaseError from "../../dataAccess/DatabaseError";
 import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
 import ListItem from "../../domain/ListItem";
 import ServerError from "../ServerError";
+import UserNoAccessError from "../UserNoAccessError";
 
 export interface ListItemFactory {
   createListItem(data: any): ListItem;
@@ -18,10 +18,11 @@ export default function buildAddListItem({
   listItemFactory: ListItemFactory;
 }) {
   return class AddListItem {
-    constructor(private data: { listId: Id; listItem: any }) {}
+    constructor(private data: { userId: Id; listId: Id; listItem: any }) {}
 
     async execute() {
       const list = await this.getList();
+      this.checkIfUserHasAccess(list);
       const listItem = listItemFactory.createListItem(this.data.listItem);
       list.addListItem(listItem);
       await this.saveModifiedList(list);
@@ -33,6 +34,12 @@ export default function buildAddListItem({
       } catch (e) {
         if (e instanceof NotFoundError) throw new Error("list not found");
         else throw new ServerError("could not get list");
+      }
+    }
+
+    private checkIfUserHasAccess(list: List) {
+      if (!list.isUserAllowed(this.data.userId)) {
+        throw new UserNoAccessError();
       }
     }
 

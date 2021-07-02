@@ -35,6 +35,10 @@ export default class List {
     return this._listItems[Symbol.iterator]();
   }
 
+  isUserAllowed(userId: Id){
+    return this.authorId.equals(userId)
+  }
+
   addListItem(listItem: ListItem) {
     this._listItems.push(listItem);
   }
@@ -63,3 +67,4 @@ export default class List {
     if (this.data.title.length === 0) throw new ValidationError("empty title");
   }
 }
+
