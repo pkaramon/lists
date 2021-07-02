@@ -3,10 +3,13 @@ type FromSchema<Schema> = {
     ? string
     : Schema[key] extends NumberConstructor
     ? number
+    : Schema[key] extends BooleanConstructor
+    ? boolean
     : Schema[key] extends DateConstructor
     ? Date
+    : Schema[key] extends null
+    ? null
     : never;
 };
 
-
-export default FromSchema
+export default FromSchema;
