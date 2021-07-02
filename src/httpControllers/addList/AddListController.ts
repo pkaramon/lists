@@ -1,3 +1,4 @@
+import TokenValidator from "../../auth/TokenValidator";
 import Id from "../../domain/Id";
 import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
 import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
@@ -11,10 +12,16 @@ type AddListUseCase = UseCaseClass<
   { listId: Id }
 >;
 
-export default function buildAddListController(AddList: AddListUseCase) {
+export default function buildAddListController({
+  AddList,
+  tokenValidator,
+}: {
+  AddList: AddListUseCase;
+  tokenValidator: TokenValidator;
+}) {
   return class AddListController {
     static requestBodySchema = {
-      userId: Id,
+      token: String,
       title: String,
       description: String,
     };
@@ -23,7 +30,13 @@ export default function buildAddListController(AddList: AddListUseCase) {
       body: FromSchema<typeof AddListController.requestBodySchema>;
     }) {
       try {
-        const { listId } = await this.tryToAddList(req.body);
+        var userId = await tokenValidator.validate(req.body.token);
+      } catch (e) {
+        return this.getAuthFailedResponse();
+      }
+
+      try {
+        const { listId } = await this.tryToAddList(userId, req.body);
         return new DataResponse(201, { listId: listId.toPrimitive() });
       } catch (e) {
         if (e instanceof InvalidListDataError)
@@ -34,10 +47,15 @@ export default function buildAddListController(AddList: AddListUseCase) {
       }
     }
 
+    private getAuthFailedResponse() {
+      return new ErrorResponse(400, "auth error");
+    }
+
     private async tryToAddList(
+      userId: Id,
       body: FromSchema<typeof AddListController.requestBodySchema>
     ) {
-      const { userId, title, description } = body;
+      const { title, description } = body;
       return await new AddList({
         userId: userId,
         list: { title, description },
@@ -49,7 +67,7 @@ export default function buildAddListController(AddList: AddListUseCase) {
     }
 
     private getUserNotExistResponse() {
-      return new ErrorResponse(404, "user with passed userId does not exist");
+      return new ErrorResponse(404, "user does not exist");
     }
   };
 }

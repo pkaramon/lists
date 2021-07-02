@@ -1,6 +1,7 @@
 import Clock from "../../domain/Clock";
 import User from "../../domain/User";
 import FakeClock from "../../fakes/FakeClock";
+import FakeTokenValidator from "../../fakes/FakeTokenValidator";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
@@ -9,7 +10,7 @@ import buildAddList from "../../usecases/addList/AddList";
 import {
   expectDataToMatch,
   expectErrorMessageToBe,
-  expectStatusCodeToBe,
+  expectStatusCodeToBe
 } from "../__test__/fixtures";
 import buildAddListController from "./AddListController";
 
@@ -32,12 +33,31 @@ beforeEach(async () => {
     listDb: new ListDbMemory(),
     idCreator: new NumberIdCreator(),
   });
-  addListCtrl = new (buildAddListController(AddList))();
+  addListCtrl = new (buildAddListController({
+    AddList,
+    tokenValidator: new FakeTokenValidator(),
+  }))();
+});
+
+test("invalid user token", async () => {
+  const res = await addListCtrl.handle({
+    body: {
+      token: "##1#*$#",
+      title: "title",
+      description: "desc",
+    },
+  });
+  expectStatusCodeToBe(res, 400);
+  expectErrorMessageToBe(res, "auth error");
 });
 
 test("invalid list data", async () => {
   const res = await addListCtrl.handle({
-    body: { userId: new NumberId(1), title: "", description: "" },
+    body: {
+      token: "###1###",
+      title: "",
+      description: "",
+    },
   });
   expectStatusCodeToBe(res, 400);
   expectErrorMessageToBe(res, "list title is empty");
@@ -45,18 +65,16 @@ test("invalid list data", async () => {
 
 test("user does not exist", async () => {
   const res = await addListCtrl.handle({
-    body: { userId: new NumberId(100), title: "", description: "" },
+    body: { token: "###100###", title: "", description: "" },
   });
   expectStatusCodeToBe(res, 404);
-  expectErrorMessageToBe(res, "user with passed userId does not exist");
+  expectErrorMessageToBe(res, "user does not exist");
 });
 
 test("list data is invalid and user exists", async () => {
   const res = await addListCtrl.handle({
-    body: { userId: new NumberId(1), title: "abc", description: "" },
+    body: { token: "###1###", title: "abc", description: "" },
   });
   expectStatusCodeToBe(res, 201);
-  expectDataToMatch(res, {
-    listId: 1,
-  });
+  expectDataToMatch(res, { listId: 1 });
 });
