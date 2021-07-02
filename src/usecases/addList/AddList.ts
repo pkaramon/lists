@@ -6,6 +6,8 @@ import ServerError from "../ServerError";
 import UserDb from "../../dataAccess/UserDb";
 import DatabaseError from "../../dataAccess/DatabaseError";
 import NotFoundError from "../../dataAccess/NotFoundError";
+import InvalidListDataError from "./InvalidListDataError";
+import UserNotFoundError from "./UserNotFoundError";
 
 export default function buildAddList({
   userDb,
@@ -35,24 +37,28 @@ export default function buildAddList({
       try {
         await userDb.getById(this.data.userId);
       } catch (e) {
-        if (e instanceof NotFoundError) throw new Error("user not found");
-        if (e instanceof DatabaseError) throw new ServerError("server error");
+        if (e instanceof NotFoundError) throw new UserNotFoundError();
+        if (e instanceof DatabaseError) throw new ServerError();
       }
     }
 
     private createList() {
-      return new List({
-        id: idCreator.create(),
-        authorId: this.data.userId,
-        ...this.data.list,
-      });
+      try {
+        return new List({
+          id: idCreator.create(),
+          authorId: this.data.userId,
+          ...this.data.list,
+        });
+      } catch {
+        throw new InvalidListDataError();
+      }
     }
 
     private async saveList(list: List) {
       try {
         await listDb.save(list);
       } catch (e) {
-        throw new ServerError("server error");
+        throw new ServerError();
       }
     }
   };

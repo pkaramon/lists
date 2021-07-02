@@ -1,4 +1,4 @@
-export default interface Id {
-  equals(other: Id): boolean;
-  toPrimitive(): string | number;
+export default abstract class Id {
+  abstract equals(other: Id): boolean;
+  abstract toPrimitive(): string | number;
 }

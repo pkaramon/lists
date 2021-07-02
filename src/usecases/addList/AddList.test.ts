@@ -11,6 +11,8 @@ import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import buildAddList from "./AddList";
 import DatabaseError from "../../dataAccess/DatabaseError";
+import InvalidListDataError from "./InvalidListDataError";
+import UserNotFoundError from "./UserNotFoundError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let userDb: UserDbMemory;
@@ -46,7 +48,7 @@ describe("validation", () => {
   test("user not in db", async () => {
     return expect(async () => {
       await new AddList({ userId: new NumberId(2), ...listData }).execute();
-    }).rejects.toThrow("user not found");
+    }).rejects.toThrow(UserNotFoundError);
   });
 
   test("empty title", () => {
@@ -55,7 +57,7 @@ describe("validation", () => {
         userId,
         list: { title: "  ", description: "abc" },
       }).execute();
-    }).rejects.toThrow("empty title");
+    }).rejects.toThrow(InvalidListDataError);
   });
 });
 

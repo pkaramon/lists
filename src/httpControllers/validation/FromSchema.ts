@@ -1,5 +1,9 @@
+import Id from "../../domain/Id";
+
 type FromSchema<Schema> = {
-  [key in keyof Schema]: Schema[key] extends StringConstructor
+  [key in keyof Schema]: Schema[key] extends typeof Id
+    ? Id
+    : Schema[key] extends StringConstructor
     ? string
     : Schema[key] extends NumberConstructor
     ? number

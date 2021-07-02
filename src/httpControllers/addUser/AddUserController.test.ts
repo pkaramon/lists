@@ -1,7 +1,6 @@
 import FakeUseCase from "../../fakes/FakeUseCase";
 import NumberId from "../../fakes/NumberId";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
-import ServerError from "../../usecases/ServerError";
 import {
   expectStatusCodeToBe,
   expectErrorMessageToBe,
