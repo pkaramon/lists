@@ -1,4 +1,5 @@
 import DatabaseError from "../../dataAccess/DatabaseError";
+import Id from "../../domain/Id";
 import List from "../../domain/List";
 import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
@@ -10,14 +11,16 @@ import buildDeleteListItem from "./DeleteListItem";
 
 let listDb: ListDbMemory;
 let DeleteListItem: ReturnType<typeof buildDeleteListItem>;
-
+const listWithItemsId = new NumberId(1);
+const emptyListId = new NumberId(2);
+const authorId = new NumberId(1);
 beforeEach(async () => {
   listDb = new ListDbMemory();
   DeleteListItem = buildDeleteListItem({ listDb });
 
   const listWithListItems = new List({
-    id: new NumberId(1),
-    authorId: new NumberId(1),
+    id: listWithItemsId,
+    authorId,
     title: "list with list items",
     description: "",
   });
@@ -27,7 +30,7 @@ beforeEach(async () => {
   await listDb.save(listWithListItems);
 
   const emptyList = new List({
-    id: new NumberId(2),
+    id: emptyListId,
     authorId: new NumberId(1),
     title: "first list",
     description: "",
@@ -39,58 +42,45 @@ test("user does not have access to the list", async () => {
   const fn = () =>
     new DeleteListItem({
       userId: new NumberId(123),
-      listId: new NumberId(1),
+      listId: listWithItemsId,
       listItemIndex: 0,
     }).execute();
-
   await expect(fn).rejects.toThrowError(UserNoAccessError);
 });
 
 test("list does not exist", async () => {
   const fn = async () =>
     await new DeleteListItem({
-      userId: new NumberId(123),
+      userId: authorId,
       listId: new NumberId(100),
       listItemIndex: 0,
     }).execute();
-
   await expect(fn).rejects.toThrow("list not found");
 });
 
 test("listItemIndex is invalid", async () => {
-  await expect(
-    async () =>
-      await new DeleteListItem({
-        userId: new NumberId(1),
-        listId: new NumberId(1),
-        listItemIndex: 3,
-      }).execute()
-  ).rejects.toThrow("no list item at index: 3");
-
-  await expect(
-    async () =>
-      await new DeleteListItem({
-        userId: new NumberId(1),
-        listId: new NumberId(2),
-        listItemIndex: 0,
-      }).execute()
-  ).rejects.toThrow("no list item at index: 0");
-
-  await expect(
-    async () =>
-      await new DeleteListItem({
-        userId: new NumberId(1),
-        listId: new NumberId(2),
-        listItemIndex: 3.14,
-      }).execute()
-  ).rejects.toThrow("no list item at index: 3.14");
+  const deleteAt = (listId: Id, index: number) =>
+    new DeleteListItem({
+      userId: authorId,
+      listId,
+      listItemIndex: index,
+    }).execute();
+  await expect(deleteAt(listWithItemsId, 3)).rejects.toThrow(
+    "no list item at index: 3"
+  );
+  await expect(deleteAt(emptyListId, 0)).rejects.toThrow(
+    "no list item at index: 0"
+  );
+  await expect(deleteAt(listWithItemsId, 3.14)).rejects.toThrow(
+    "no list item at index: 3.14"
+  );
 });
 
-test("deleting listitem", async () => {
+test("deleting listItem", async () => {
   const saveSpy = jest.spyOn(listDb, "save");
   await new DeleteListItem({
-    userId: new NumberId(1),
-    listId: new NumberId(1),
+    userId: authorId,
+    listId: listWithItemsId,
     listItemIndex: 1,
   }).execute();
 
@@ -101,34 +91,26 @@ test("deleting listitem", async () => {
   expect(saveSpy).toHaveBeenCalledWith(list);
 });
 
-test("listDb save error", async () => {
-  listDb.save = () => {
+describe("ListDb errors", () => {
+  const errorFn = () => {
     throw new DatabaseError();
   };
-
   const fn = async () =>
     await new DeleteListItem({
-      userId: new NumberId(1),
-      listId: new NumberId(1),
+      userId: authorId,
+      listId: listWithItemsId,
       listItemIndex: 1,
     }).execute();
 
-  await expect(fn).rejects.toThrow(ServerError);
-  await expect(fn).rejects.toThrow("could not save the changes");
-});
+  test("save error", async () => {
+    listDb.save = errorFn;
+    await expect(fn).rejects.toThrow(ServerError);
+    await expect(fn).rejects.toThrow("could not save the changes");
+  });
 
-test("listDb retrival error", async () => {
-  listDb.getById = () => {
-    throw new DatabaseError();
-  };
-
-  const fn = async () =>
-    await new DeleteListItem({
-      userId: new NumberId(1),
-      listId: new NumberId(1),
-      listItemIndex: 1,
-    }).execute();
-
-  await expect(fn).rejects.toThrow(ServerError);
-  await expect(fn).rejects.toThrow("could not get the list");
+  test("getById error", async () => {
+    listDb.getById = errorFn;
+    await expect(fn).rejects.toThrow(ServerError);
+    await expect(fn).rejects.toThrow("could not get the list");
+  });
 });

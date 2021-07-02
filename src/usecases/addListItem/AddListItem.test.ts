@@ -15,6 +15,7 @@ import UserNoAccessError from "../UserNoAccessError";
 let listDb: ListDb;
 let AddListItem: ReturnType<typeof buildAddListItem>;
 const authorId = new NumberId(7);
+const listId = new NumberId(1);
 beforeEach(async () => {
   listDb = new ListDbMemory();
   AddListItem = buildAddListItem({
@@ -23,7 +24,7 @@ beforeEach(async () => {
   });
   await listDb.save(
     new List({
-      id: new NumberId(1),
+      id: listId,
       title: "list title",
       authorId,
       description: "list description",
@@ -35,7 +36,7 @@ test("user is not the author of the list", async () => {
   const fn = async () =>
     await new AddListItem({
       userId: new NumberId(123),
-      listId: new NumberId(1),
+      listId,
       listItem: { type: "text", title: "list item 1" },
     }).execute();
   await expect(fn).rejects.toThrow(UserNoAccessError);
@@ -58,7 +59,7 @@ describe("adding different types of listItems", () => {
   ) {
     const saveSpy = jest.spyOn(listDb, "save");
     await new AddListItem(addListItemData).execute();
-    const list = await listDb.getById(new NumberId(1));
+    const list = await listDb.getById(listId);
     const listItem = list.getListItemAt(0);
 
     additionalExpectations(listItem);
@@ -69,7 +70,7 @@ describe("adding different types of listItems", () => {
     await testAddingListItem(
       {
         userId: authorId,
-        listId: new NumberId(1),
+        listId,
         listItem: { type: "text", title: "abc" },
       },
       (li) => {
@@ -83,7 +84,7 @@ describe("adding different types of listItems", () => {
     await testAddingListItem(
       {
         userId: authorId,
-        listId: new NumberId(1),
+        listId,
         listItem: { type: "checkbox", title: "abc", checked: true },
       },
       (li) => {
@@ -98,7 +99,7 @@ describe("adding different types of listItems", () => {
     await testAddingListItem(
       {
         userId: authorId,
-        listId: new NumberId(1),
+        listId,
         listItem: { type: "detailed", title: "abc", description: "def" },
       },
       (li) => {
@@ -114,41 +115,34 @@ describe("database failures", () => {
   const fn = async () =>
     await new AddListItem({
       userId: authorId,
-      listId: new NumberId(1),
+      listId,
       listItem: { type: "detailed", title: "abc", description: "def" },
     }).execute();
+  const errorFn = () => {
+    throw new DatabaseError();
+  };
 
   test("unexpected listDb.getById failure", async () => {
-    listDb.getById = () => {
-      throw new DatabaseError();
-    };
+    listDb.getById = errorFn;
     await expect(fn).rejects.toThrow(ServerError);
     await expect(fn).rejects.toThrow("could not get list");
   });
 
   test("unexpected listDb.save failure", async () => {
-    listDb.save = () => {
-      throw new DatabaseError();
-    };
+    listDb.save = errorFn;
     await expect(fn).rejects.toThrow(ServerError);
     await expect(fn).rejects.toThrow("could not save");
   });
 });
 
 test("adding multiple list items", async () => {
-  await new AddListItem({
-    userId: authorId,
-    listId: new NumberId(1),
-    listItem: { type: "detailed", title: "abc", description: "def" },
-  }).execute();
+  const addListItem = (listItem: any) =>
+    new AddListItem({ userId: authorId, listId, listItem }).execute();
 
-  await new AddListItem({
-    userId: authorId,
-    listId: new NumberId(1),
-    listItem: { type: "text", title: "hello" },
-  }).execute();
+  await addListItem({ type: "detailed", title: "abc", description: "def" });
+  await addListItem({ type: "text", title: "hello" });
 
-  const list = await listDb.getById(new NumberId(1));
+  const list = await listDb.getById(listId);
   const first = list.getListItemAt(0) as DetailedListItem;
   const second = list.getListItemAt(1) as TextListItem;
 
