@@ -5,12 +5,13 @@ import ListItem from "../../domain/ListItem";
 import CheckBoxListItem from "../../domain/ListItem/CheckboxListItem";
 import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
-import ListDbMemory from "../../fakes/ListDbMemory";
-import NumberId from "../../fakes/NumberId";
+import { NumberId, ListDbMemory } from "../../fakes";
 import ServerError from "../ServerError";
-import buildAddListItem from "./AddListItem";
-import ListItemFactoryImp from "./ListItemFactoryImp";
 import UserNoAccessError from "../UserNoAccessError";
+import buildAddListItem from "./AddListItem";
+import { UnknownListItemTypeError } from "./ListItemFactory";
+import ListItemFactoryImp from "./ListItemFactoryImp";
+import ListNotFoundError from "./ListNotFoundError";
 
 let listDb: ListDb;
 let AddListItem: ReturnType<typeof buildAddListItem>;
@@ -49,7 +50,7 @@ test("list not in the db", async () => {
       listId: new NumberId(2),
       listItem: { type: "text", title: "list item 1" },
     }).execute();
-  await expect(fn).rejects.toThrow("list not found");
+  await expect(fn).rejects.toThrow(ListNotFoundError);
 });
 
 describe("adding different types of listItems", () => {
@@ -109,6 +110,16 @@ describe("adding different types of listItems", () => {
       }
     );
   });
+});
+
+test("adding listItem with unknown type", async () => {
+  const fn = async () =>
+    await new AddListItem({
+      userId: authorId,
+      listId,
+      listItem: { type: "xxxxx", title: "abc", description: "def" },
+    }).execute();
+  await expect(fn).rejects.toThrowError(UnknownListItemTypeError);
 });
 
 describe("database failures", () => {

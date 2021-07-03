@@ -4,6 +4,7 @@ import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
 import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
+import HttpRequest from "../HttpRequest";
 import UseCaseClass from "../UseCaseClass";
 import FromSchema from "../validation/FromSchema";
 
@@ -12,13 +13,7 @@ type AddListUseCase = UseCaseClass<
   { listId: Id }
 >;
 
-export default function buildAddListController({
-  AddList,
-  tokenValidator,
-}: {
-  AddList: AddListUseCase;
-  tokenValidator: TokenValidator;
-}) {
+export default function buildAddListController(AddList: AddListUseCase) {
   return class AddListController {
     static requestBodySchema = {
       token: String,
@@ -26,15 +21,10 @@ export default function buildAddListController({
       description: String,
     };
 
-    async handle(req: {
-      body: FromSchema<typeof AddListController.requestBodySchema>;
-    }) {
-      try {
-        var userId = await tokenValidator.validate(req.body.token);
-      } catch (e) {
-        return this.getAuthFailedResponse();
-      }
-
+    async handle(
+      req: HttpRequest<FromSchema<typeof AddListController.requestBodySchema>>
+    ) {
+      const userId = req.auth.userId as Id;
       try {
         const { listId } = await this.tryToAddList(userId, req.body);
         return new DataResponse(201, { listId: listId.toPrimitive() });
@@ -45,10 +35,6 @@ export default function buildAddListController({
           return this.getUserNotExistResponse();
         else throw e;
       }
-    }
-
-    private getAuthFailedResponse() {
-      return new ErrorResponse(400, "auth error");
     }
 
     private async tryToAddList(

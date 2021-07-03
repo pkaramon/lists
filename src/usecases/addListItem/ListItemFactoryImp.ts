@@ -2,8 +2,7 @@ import ListItem from "../../domain/ListItem";
 import CheckBoxListItem from "../../domain/ListItem/CheckboxListItem";
 import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
-import {ListItemFactory} from "./AddListItem";
-
+import ListItemFactory, {UnknownListItemTypeError} from "./ListItemFactory";
 
 export default class ListItemFactoryImp implements ListItemFactory {
   createListItem(
@@ -20,7 +19,7 @@ export default class ListItemFactoryImp implements ListItemFactory {
       case "detailed":
         return new DetailedListItem(data.title, data.description);
       default:
-        throw new Error(`unknown list item type`);
+        throw new UnknownListItemTypeError();
     }
   }
 }

@@ -1,6 +1,5 @@
 import Id from "../../domain/Id";
 import List from "../../domain/List";
-import { IdCreator } from "../addUser/AddUser";
 import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import UserDb from "../../dataAccess/UserDb";
@@ -8,6 +7,7 @@ import DatabaseError from "../../dataAccess/DatabaseError";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import InvalidListDataError from "./InvalidListDataError";
 import UserNotFoundError from "./UserNotFoundError";
+import IdCreator from "../../dataAccess/IdCreator";
 
 export default function buildAddList({
   userDb,

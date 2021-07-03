@@ -1,5 +1,6 @@
 import Id from "../../domain/Id";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
+import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import UseCaseClass from "../UseCaseClass";
@@ -30,6 +31,8 @@ export default function buildAddUserController(
       } catch (e) {
         if (e instanceof EmailAlreadyTakenError)
           return new ErrorResponse(400, "email is already taken");
+        if (e instanceof InvalidUserDataError)
+          return new ErrorResponse(400, e.message);
         else throw e;
       }
     }

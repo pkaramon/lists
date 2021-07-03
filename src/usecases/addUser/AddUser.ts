@@ -1,16 +1,13 @@
 import DatabaseError from "../../dataAccess/DatabaseError";
+import IdCreator from "../../dataAccess/IdCreator";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import UserDb from "../../dataAccess/UserDb";
-import Id from "../../domain/Id";
 import User from "../../domain/User";
 import ValidationError from "../../domain/ValidationError";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
 import EmailAlreadyTakenError from "./EmailAlreadyTakenError";
-
-export interface IdCreator {
-  create(): Id;
-}
+import InvalidUserDataError from "./InvalidUserDataError";
 
 export default function buildAddUser({
   idCreator,
@@ -62,13 +59,18 @@ export default function buildAddUser({
     }
 
     private async createUser() {
-      return new User({
-        id: idCreator.create(),
-        name: this.data.name,
-        email: this.data.email,
-        birthDate: this.data.birthDate,
-        password: await hasher.hash(this.data.password),
-      });
+      try {
+        return new User({
+          id: idCreator.create(),
+          name: this.data.name,
+          email: this.data.email,
+          birthDate: this.data.birthDate,
+          password: await hasher.hash(this.data.password),
+        });
+      } catch (e) {
+        const error = e as ValidationError;
+        throw new InvalidUserDataError(error.message);
+      }
     }
 
     private async saveUser(user: User) {

@@ -9,6 +9,7 @@ import UserDbMemory from "../../fakes/UserDbMemory";
 import ServerError from "../ServerError";
 import buildAddUser from "./AddUser";
 import EmailAlreadyTakenError from "./EmailAlreadyTakenError";
+import InvalidUserDataError from "./InvalidUserDataError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const hasher = new FakeHasher();
@@ -35,7 +36,7 @@ describe("invalid data", () => {
   test("invalid user data", async () => {
     const fn = () =>
       new AddUser({ ...userData, email: "NOT AN EMAIL" }).execute();
-    await expect(fn).rejects.toThrowError(ValidationError);
+    await expect(fn).rejects.toThrowError(InvalidUserDataError);
     await expect(fn).rejects.toThrowError("email must be a valid email");
   });
 

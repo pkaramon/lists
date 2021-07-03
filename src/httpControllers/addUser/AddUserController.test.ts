@@ -1,6 +1,7 @@
 import FakeUseCase from "../../fakes/FakeUseCase";
 import NumberId from "../../fakes/NumberId";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
+import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import {
   expectStatusCodeToBe,
   expectErrorMessageToBe,
@@ -38,4 +39,15 @@ test("successfully creating a user", async () => {
   });
   expectStatusCodeToBe(response, 201);
   expectDataToMatch(response, { userId: 123 });
+});
+
+test("invalid user data", async () => {
+  FakeUseCase.mockError(
+    new InvalidUserDataError("name must contain at least 2 characters")
+  );
+  const response = await addUserController.handle({
+    body: { ...requestBody, name: "a" },
+  });
+  expectStatusCodeToBe(response, 400);
+  expectErrorMessageToBe(response, "name must contain at least 2 characters");
 });

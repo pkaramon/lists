@@ -2,13 +2,10 @@ import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
-import ListItem from "../../domain/ListItem";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-
-export interface ListItemFactory {
-  createListItem(data: any): ListItem;
-}
+import ListItemFactory from "./ListItemFactory";
+import ListNotFoundError from "./ListNotFoundError";
 
 export default function buildAddListItem({
   listDb,
@@ -32,7 +29,7 @@ export default function buildAddListItem({
       try {
         return await listDb.getById(this.data.listId);
       } catch (e) {
-        if (e instanceof NotFoundError) throw new Error("list not found");
+        if (e instanceof NotFoundError) throw new ListNotFoundError();
         else throw new ServerError("could not get list");
       }
     }
