@@ -4,7 +4,6 @@ import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import UseCaseClass from "../UseCaseClass";
-import FromSchema from "../validation/FromSchema";
 
 export default function buildAddUserController(
   AddUser: UseCaseClass<
@@ -12,11 +11,10 @@ export default function buildAddUserController(
     { userId: Id }
   >
 ) {
-  return class AddUserController<
-    RequestBody extends FromSchema<
-      typeof AddUserController["requestBodySchema"]
-    >
-  > {
+  type Request = {
+    body: { name: string; password: string; email: string; birthDate: Date };
+  };
+  return class AddUserController {
     static requestBodySchema = {
       name: String,
       password: String,
@@ -24,7 +22,7 @@ export default function buildAddUserController(
       birthDate: Date,
     };
 
-    async handle(req: { body: RequestBody }) {
+    async handle(req: Request) {
       try {
         const { userId } = await this.getResultFromAddUser(req.body);
         return new DataResponse(201, { userId: userId.toPrimitive() });
@@ -37,7 +35,7 @@ export default function buildAddUserController(
       }
     }
 
-    private async getResultFromAddUser(body: RequestBody) {
+    private async getResultFromAddUser(body: Request["body"]) {
       return await new AddUser({
         name: body.name,
         password: body.password,

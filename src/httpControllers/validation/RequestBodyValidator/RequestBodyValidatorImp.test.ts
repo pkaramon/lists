@@ -1,16 +1,16 @@
 import BodyIsNotAnObjectError from "./BodyIsNotAnObjectError";
 import RequestBodyError from "./RequestBodyError";
-import RequestBodyValidator from "./RequestBodyValidator";
+import RequestBodyValidatorImp from "./RequestBodyValidatorImp";
 
 test("body is not an object", () => {
-  const validator = new RequestBodyValidator({ name: String, age: Number });
+  const validator = new RequestBodyValidatorImp({ name: String, age: Number });
   for (const invalid of [null, undefined, 1, "a", false]) {
     expect(() => validator.validate(invalid)).toThrow(BodyIsNotAnObjectError);
   }
 });
 
 function expectRequestBodyErrorToMatch(
-  validator: RequestBodyValidator<any>,
+  validator: RequestBodyValidatorImp<any>,
   body: any,
   expectedError: any
 ) {
@@ -24,7 +24,7 @@ function expectRequestBodyErrorToMatch(
 }
 
 test("body is an object but contains invalid data", () => {
-  const validator = new RequestBodyValidator({ name: String, age: Number });
+  const validator = new RequestBodyValidatorImp({ name: String, age: Number });
   expectRequestBodyErrorToMatch(
     validator,
     { name: "bob" },
@@ -43,7 +43,7 @@ test("body is an object but contains invalid data", () => {
 });
 
 test("body contains a required property but it has wrong type", () => {
-  const validator = new RequestBodyValidator({ name: String, age: Number });
+  const validator = new RequestBodyValidatorImp({ name: String, age: Number });
   expectRequestBodyErrorToMatch(
     validator,
     { name: 42, age: 42 },
@@ -67,7 +67,7 @@ test("body contains a required property but it has wrong type", () => {
 });
 
 test("mixed missing properties with properties with invalid types", () => {
-  const validator = new RequestBodyValidator({
+  const validator = new RequestBodyValidatorImp({
     name: String,
     email: String,
     age: Number,
@@ -93,7 +93,7 @@ test("mixed missing properties with properties with invalid types", () => {
 
 describe("additional types", () => {
   test("booleans ", () => {
-    const validator = new RequestBodyValidator({ adult: Boolean });
+    const validator = new RequestBodyValidatorImp({ adult: Boolean });
     expectRequestBodyErrorToMatch(
       validator,
       { adult: "" },
@@ -104,7 +104,7 @@ describe("additional types", () => {
   });
 
   test("dates", () => {
-    const validator = new RequestBodyValidator({ birthDate: Date });
+    const validator = new RequestBodyValidatorImp({ birthDate: Date });
     expectRequestBodyErrorToMatch(
       validator,
       { birthDate: 123 },
@@ -122,7 +122,7 @@ describe("additional types", () => {
 });
 
 test("all properties exist and have correct types", () => {
-  const validator = new RequestBodyValidator({
+  const validator = new RequestBodyValidatorImp({
     name: String,
     age: Number,
     birthDate: Date,

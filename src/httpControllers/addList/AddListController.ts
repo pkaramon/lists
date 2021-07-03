@@ -1,4 +1,3 @@
-import TokenValidator from "../../auth/TokenValidator";
 import Id from "../../domain/Id";
 import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
 import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
