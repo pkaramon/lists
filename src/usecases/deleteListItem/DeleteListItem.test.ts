@@ -5,6 +5,8 @@ import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
+import InvalidListItemIndexError from "../InvalidListItemIndexError";
+import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import buildDeleteListItem from "./DeleteListItem";
@@ -55,7 +57,7 @@ test("list does not exist", async () => {
       listId: new NumberId(100),
       listItemIndex: 0,
     }).execute();
-  await expect(fn).rejects.toThrow("list not found");
+  await expect(fn).rejects.toThrow(ListNotFoundError);
 });
 
 test("listItemIndex is invalid", async () => {
@@ -66,13 +68,13 @@ test("listItemIndex is invalid", async () => {
       listItemIndex: index,
     }).execute();
   await expect(deleteAt(listWithItemsId, 3)).rejects.toThrow(
-    "no list item at index: 3"
+    InvalidListItemIndexError
   );
   await expect(deleteAt(emptyListId, 0)).rejects.toThrow(
-    "no list item at index: 0"
+    InvalidListItemIndexError
   );
   await expect(deleteAt(listWithItemsId, 3.14)).rejects.toThrow(
-    "no list item at index: 3.14"
+    InvalidListItemIndexError
   );
 });
 

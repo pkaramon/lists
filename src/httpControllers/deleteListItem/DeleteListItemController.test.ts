@@ -1,4 +1,4 @@
-import ChangeListItemTitleController from ".";
+import DeleteListItemController from ".";
 import { NumberId } from "../../fakes";
 import FakeIdConverter from "../../fakes/FakeIdConverter";
 import InvalidListItemIndexError from "../../usecases/InvalidListItemIndexError";
@@ -12,7 +12,15 @@ import {
   MockUseCase,
 } from "../__test__/fixtures";
 
-const controller = new ChangeListItemTitleController(
+const request = Object.freeze({
+  auth: { userId: new NumberId(2) },
+  body: {
+    listId: 1,
+    listItemIndex: 4,
+  },
+});
+
+const controller = new DeleteListItemController(
   MockUseCase,
   new FakeIdConverter()
 );
@@ -21,46 +29,35 @@ beforeEach(() => MockUseCase.clear());
 
 test("list does not exist", async () => {
   MockUseCase.mockError(new ListNotFoundError());
-  const res = await controller.handle({
-    body: { token: "###1###", listId: 1, listItemIndex: 0, title: "hello" },
-    auth: { userId: new NumberId(1) },
-  });
+  const res = await controller.handle(request);
   expectStatusCodeToBe(res, StatusCode.NotFound);
   expectErrorMessageToBe(res, "list not found");
 });
 
-test("listItemIndex is invalid", async () => {
-  MockUseCase.mockError(new InvalidListItemIndexError());
-  const res = await controller.handle({
-    body: { token: "###1###", listId: 1, listItemIndex: -1, title: "hello" },
-    auth: { userId: new NumberId(1) },
-  });
-  expectStatusCodeToBe(res, StatusCode.BadRequest);
-  expectErrorMessageToBe(res, "invalid list item index: -1");
-});
-
 test("user does not have access to the list", async () => {
   MockUseCase.mockError(new UserNoAccessError());
-  const res = await controller.handle({
-    body: { token: "###7###", listId: 1, listItemIndex: -1, title: "hello" },
-    auth: { userId: new NumberId(7) },
-  });
+  const res = await controller.handle(request);
   expectStatusCodeToBe(res, StatusCode.Unauthorized);
   expectErrorMessageToBe(res, "you do not have access to this list");
 });
 
-test("all data is valid", async () => {
-  const res = await controller.handle({
-    body: { token: "###2###", listId: 1, listItemIndex: 0, title: "hello" },
-    auth: { userId: new NumberId(2) },
-  });
+test("listItemIndex is invalid", async () => {
+  MockUseCase.mockError(new InvalidListItemIndexError());
+  const res = await controller.handle(request);
+  expectStatusCodeToBe(res, StatusCode.BadRequest);
+  expectErrorMessageToBe(res, "invalid list item index: 4");
+});
 
+test("data is correct", async () => {
+  MockUseCase.mockResult(undefined);
+  const res = await controller.handle(request);
   MockUseCase.expectPassedDataToMatch({
     listId: new NumberId(1),
     userId: new NumberId(2),
-    listItemIndex: 0,
-    title: "hello",
+    listItemIndex: request.body.listItemIndex,
   });
   expectStatusCodeToBe(res, StatusCode.Ok);
-  expectDataToMatch(res, { message: "successfully changed the title" });
+  expectDataToMatch(res, {
+    message: "successfully deleted list item at index: 4",
+  });
 });

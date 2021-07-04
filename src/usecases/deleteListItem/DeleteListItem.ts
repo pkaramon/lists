@@ -3,6 +3,8 @@ import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
+import InvalidListItemIndexError from "../InvalidListItemIndexError";
+import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 
@@ -23,7 +25,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
       try {
         return await listDb.getById(this.data.listId);
       } catch (e) {
-        if (e instanceof NotFoundError) throw new Error("list not found");
+        if (e instanceof NotFoundError) throw new ListNotFoundError();
         else throw new ServerError("could not get the list");
       }
     }
@@ -39,8 +41,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
       try {
         list.removeListItemAt(i);
       } catch (e) {
-        if (e instanceof RangeError)
-          throw new Error(`no list item at index: ${i}`);
+        throw new InvalidListItemIndexError();
       }
     }
 

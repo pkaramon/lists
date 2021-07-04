@@ -3,6 +3,8 @@ import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
+import ListNotFoundError from "../ListNotFoundError";
+import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 
 export default function buildViewList({ listDb }: { listDb: ListDb }) {
@@ -23,10 +25,9 @@ export default function buildViewList({ listDb }: { listDb: ListDb }) {
       try {
         return await listDb.getById(this.data.listId);
       } catch (e) {
-        if (e instanceof NotFoundError) throw new Error("list not found");
-        if (e instanceof DatabaseError)
-          throw new Error("could not view the list");
-        else throw e;
+        if (e instanceof NotFoundError)
+          throw new ListNotFoundError("list not found");
+        else throw new ServerError("could not view the list");
       }
     }
 

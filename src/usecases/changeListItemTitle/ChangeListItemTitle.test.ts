@@ -9,7 +9,7 @@ import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import buildChangeListItemTitle from "./ChangeListItemTitle";
-import InvalidListItemIndex from "./InvalidListItemIndexError";
+import InvalidListItemIndexError from "../InvalidListItemIndexError";
 
 function getTestList() {
   const list = new List({
@@ -64,7 +64,7 @@ test("list exists but list item at specified index does not", async () => {
       title: "new title",
     }).execute();
   await expect(fn).rejects.toThrow("no list item at index: 2");
-  await expect(fn).rejects.toThrow(InvalidListItemIndex);
+  await expect(fn).rejects.toThrow(InvalidListItemIndexError);
 });
 
 test("changing title", async () => {

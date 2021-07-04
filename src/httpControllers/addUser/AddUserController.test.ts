@@ -1,4 +1,3 @@
-import FakeUseCase from "../../fakes/FakeUseCase";
 import NumberId from "../../fakes/NumberId";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
 import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
@@ -7,13 +6,14 @@ import {
   expectStatusCodeToBe,
   expectErrorMessageToBe,
   expectDataToMatch,
+  MockUseCase,
 } from "../__test__/fixtures";
 import AddUserController from ".";
 
 let addUserController: AddUserController;
 
 beforeEach(() => {
-  addUserController = new AddUserController(FakeUseCase);
+  addUserController = new AddUserController(MockUseCase);
 });
 
 const requestBody = {
@@ -24,7 +24,7 @@ const requestBody = {
 };
 
 test("addUser throws EmailAlreadyTakenError", async () => {
-  FakeUseCase.mockError(new EmailAlreadyTakenError());
+  MockUseCase.mockError(new EmailAlreadyTakenError());
   const response = await addUserController.handle({
     body: requestBody,
   });
@@ -34,7 +34,7 @@ test("addUser throws EmailAlreadyTakenError", async () => {
 });
 
 test("successfully creating a user", async () => {
-  FakeUseCase.mockResult({ userId: new NumberId(123) });
+  MockUseCase.mockResult({ userId: new NumberId(123) });
   const response = await addUserController.handle({
     body: requestBody,
   });
@@ -43,7 +43,7 @@ test("successfully creating a user", async () => {
 });
 
 test("invalid user data", async () => {
-  FakeUseCase.mockError(
+  MockUseCase.mockError(
     new InvalidUserDataError("name must contain at least 2 characters")
   );
   const response = await addUserController.handle({

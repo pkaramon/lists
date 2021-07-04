@@ -1,23 +1,24 @@
 import AddListItemController from ".";
-import { FakeUseCase, NumberId } from "../../fakes";
+import { NumberId } from "../../fakes";
 import FakeIdConverter from "../../fakes/FakeIdConverter";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import StatusCode from "../StatusCode";
-import {
+import  {
   expectDataToMatch,
   expectErrorMessageToBe,
   expectStatusCodeToBe,
+  MockUseCase
 } from "../__test__/fixtures";
 
 const controller = new AddListItemController(
-  FakeUseCase,
+  MockUseCase,
   new FakeIdConverter()
 );
 
 beforeEach(() => {
-  FakeUseCase.clear();
+  MockUseCase.clear();
 });
 
 function getResponse(data: {
@@ -40,14 +41,14 @@ function getResponse(data: {
 }
 
 test("list does not exist", async () => {
-  FakeUseCase.mockError(new ListNotFoundError());
+  MockUseCase.mockError(new ListNotFoundError());
   const res = await getResponse({});
   expectStatusCodeToBe(res, StatusCode.NotFound);
   expectErrorMessageToBe(res, "list not found");
 });
 
 test("listItem type is unknown", async () => {
-  FakeUseCase.mockError(new UnknownListItemTypeError());
+  MockUseCase.mockError(new UnknownListItemTypeError());
   const res = await getResponse({
     listItem: { type: "xxxx", title: "hello" },
   });
@@ -56,25 +57,24 @@ test("listItem type is unknown", async () => {
 });
 
 test("user does not have access to the list", async () => {
-  FakeUseCase.mockError(new UserNoAccessError());
+  MockUseCase.mockError(new UserNoAccessError());
   const res = await getResponse({ userId: 2 });
   expectStatusCodeToBe(res, StatusCode.BadRequest);
   expectErrorMessageToBe(res, "you have no access to this list");
 });
 
 test("adding a list item", async () => {
-  FakeUseCase.expectPassedDataToMatch({
-    userId: new NumberId(7),
-    listId: new NumberId(1),
-    listItem: { type: "checkbox", title: "hello", checked: false },
-  });
-
   const res = await getResponse({
     userId: 7,
     listId: 1,
     listItem: { type: "checkbox", title: "hello", checked: false },
   });
 
+  MockUseCase.expectPassedDataToMatch({
+    userId: new NumberId(7),
+    listId: new NumberId(1),
+    listItem: { type: "checkbox", title: "hello", checked: false },
+  });
   expectStatusCodeToBe(res, StatusCode.Created);
   expectDataToMatch(res, { message: "created a new list item" });
 });

@@ -6,6 +6,8 @@ import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
+import ListNotFoundError from "../ListNotFoundError";
+import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import buildViewList from "./ViewList";
 
@@ -43,6 +45,7 @@ test("list not in db", async () => {
       userId: new NumberId(100),
       listId: new NumberId(100),
     }).execute();
+  await expect(fn).rejects.toThrowError(ListNotFoundError);
   await expect(fn).rejects.toThrowError("list not found");
 });
 
@@ -73,4 +76,5 @@ test("listDb getById error", async () => {
       listId: new NumberId(1),
     }).execute();
   await expect(fn).rejects.toThrowError("could not view the list");
+  await expect(fn).rejects.toThrowError(ServerError);
 });

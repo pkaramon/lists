@@ -6,7 +6,7 @@ import List from "../../domain/List";
 import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-import InvalidListItemIndex from "./InvalidListItemIndexError";
+import InvalidListItemIndexError from "../InvalidListItemIndexError";
 
 export default function buildChangeListItemTitle({
   listDb,
@@ -52,7 +52,7 @@ export default function buildChangeListItemTitle({
       try {
         return list.getListItemAt(this.data.listItemIndex);
       } catch (e) {
-        throw new InvalidListItemIndex(
+        throw new InvalidListItemIndexError(
           `no list item at index: ${this.data.listItemIndex}`
         );
       }
