@@ -3,6 +3,7 @@ import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenErro
 import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
+import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
 export default function buildAddUserController(
@@ -25,12 +26,12 @@ export default function buildAddUserController(
     async handle(req: Request) {
       try {
         const { userId } = await this.getResultFromAddUser(req.body);
-        return new DataResponse(201, { userId: userId.toPrimitive() });
+        return new DataResponse(StatusCode.Created, { userId: userId.toPrimitive() });
       } catch (e) {
         if (e instanceof EmailAlreadyTakenError)
-          return new ErrorResponse(400, "email is already taken");
+          return new ErrorResponse(StatusCode.BadRequest, "email is already taken");
         if (e instanceof InvalidUserDataError)
-          return new ErrorResponse(400, e.message);
+          return new ErrorResponse(StatusCode.BadRequest, e.message);
         else throw e;
       }
     }

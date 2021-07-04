@@ -2,6 +2,7 @@ import FakeUseCase from "../../fakes/FakeUseCase";
 import NumberId from "../../fakes/NumberId";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
 import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
+import StatusCode from "../StatusCode";
 import {
   expectStatusCodeToBe,
   expectErrorMessageToBe,
@@ -28,7 +29,7 @@ test("addUser throws EmailAlreadyTakenError", async () => {
     body: requestBody,
   });
 
-  expectStatusCodeToBe(response, 400);
+  expectStatusCodeToBe(response, StatusCode.BadRequest);
   expectErrorMessageToBe(response, "email is already taken");
 });
 
@@ -37,7 +38,7 @@ test("successfully creating a user", async () => {
   const response = await addUserController.handle({
     body: requestBody,
   });
-  expectStatusCodeToBe(response, 201);
+  expectStatusCodeToBe(response, StatusCode.Created);
   expectDataToMatch(response, { userId: 123 });
 });
 
@@ -48,6 +49,6 @@ test("invalid user data", async () => {
   const response = await addUserController.handle({
     body: { ...requestBody, name: "a" },
   });
-  expectStatusCodeToBe(response, 400);
+  expectStatusCodeToBe(response, StatusCode.BadRequest);
   expectErrorMessageToBe(response, "name must contain at least 2 characters");
 });

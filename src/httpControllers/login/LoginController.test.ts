@@ -7,6 +7,7 @@ import FakeTokenCreator from "../../fakes/FakeTokenCreator";
 import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import buildLogin from "../../usecases/login/Login";
+import StatusCode from "../StatusCode";
 import {
   expectDataToMatch,
   expectErrorMessageToBe,
@@ -45,7 +46,7 @@ test("invalid email or password", async () => {
     { email: "bob@mail.com", password: "wrong" },
   ]) {
     const response = await loginController.handle({ body });
-    expectStatusCodeToBe(response, 400);
+    expectStatusCodeToBe(response, StatusCode.BadRequest);
     expectErrorMessageToBe(response, "email or password is invalid");
   }
 });
@@ -54,6 +55,6 @@ test("valid email and password", async () => {
   const response = await loginController.handle({
     body: { email: "bob@mail.com", password: "password123" },
   });
-  expectStatusCodeToBe(response, 200);
+  expectStatusCodeToBe(response, StatusCode.Ok);
   expectDataToMatch(response, { token: "###1###" });
 });

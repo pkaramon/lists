@@ -4,6 +4,7 @@ import FakeIdConverter from "../../fakes/FakeIdConverter";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
+import StatusCode from "../StatusCode";
 import {
   expectDataToMatch,
   expectErrorMessageToBe,
@@ -40,7 +41,7 @@ function getResponse(data: {
 test("list does not exist", async () => {
   FakeUseCase.mockError(new ListNotFoundError());
   const res = await getResponse({});
-  expectStatusCodeToBe(res, 404);
+  expectStatusCodeToBe(res, StatusCode.NotFound);
   expectErrorMessageToBe(res, "list not found");
 });
 
@@ -49,14 +50,14 @@ test("listItem type is unknown", async () => {
   const res = await getResponse({
     listItem: { type: "xxxx", title: "hello" },
   });
-  expectStatusCodeToBe(res, 400);
+  expectStatusCodeToBe(res, StatusCode.BadRequest);
   expectErrorMessageToBe(res, "invalid listItem type");
 });
 
 test("user does not have access to the list", async () => {
   FakeUseCase.mockError(new UserNoAccessError());
   const res = await getResponse({ userId: 2 });
-  expectStatusCodeToBe(res, 400);
+  expectStatusCodeToBe(res, StatusCode.BadRequest);
   expectErrorMessageToBe(res, "you have no access to this list");
 });
 
@@ -73,6 +74,6 @@ test("adding a list item", async () => {
     listItem: { type: "checkbox", title: "hello", checked: false },
   });
 
-  expectStatusCodeToBe(res, 201);
+  expectStatusCodeToBe(res, StatusCode.Created);
   expectDataToMatch(res, { message: "created a new list item" });
 });

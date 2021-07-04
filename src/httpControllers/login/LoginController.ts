@@ -1,5 +1,6 @@
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
+import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 import FromSchema from "../validation/FromSchema";
 import InvalidLoginDataError from "./InvalidLoginDataError";
@@ -22,10 +23,10 @@ export default function buildLoginController(
       const { email, password } = req.body;
       try {
         const { userToken } = await new Login({ email, password }).execute();
-        return new DataResponse(200, { token: userToken });
+        return new DataResponse(StatusCode.Ok, { token: userToken });
       } catch (e) {
         if (e instanceof InvalidLoginDataError)
-          return new ErrorResponse(400, "email or password is invalid");
+          return new ErrorResponse(StatusCode.BadRequest, "email or password is invalid");
         else throw e;
       }
     }

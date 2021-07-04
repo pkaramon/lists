@@ -1,6 +1,7 @@
 import TokenValidator from "../../auth/TokenValidator";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
+import StatusCode from "../StatusCode";
 
 interface Controller {
   handle(req: { body: { token: string } }): Promise<any>;
@@ -21,7 +22,7 @@ export default function buildUserAuthDecorator(tokenValidator: TokenValidator) {
           req.auth = {};
           req.auth.userId = await tokenValidator.validate(token);
         } catch (e) {
-          return new ErrorResponse(400, "user token is invalid");
+          return new ErrorResponse(StatusCode.BadRequest, "user token is invalid");
         }
         return super.handle(req);
       }

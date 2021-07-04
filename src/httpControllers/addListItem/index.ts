@@ -6,6 +6,7 @@ import UserNoAccessError from "../../usecases/UserNoAccessError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
+import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
 type AddListItemUseCase = UseCaseClass<{
@@ -46,17 +47,17 @@ export default function buildAddListItemController({
     }
 
     private generateSuccessfulResponse() {
-      return new DataResponse(201, { message: "created a new list item" });
+      return new DataResponse(StatusCode.Created, { message: "created a new list item" });
     }
 
     private handleAddListItemErrors(error: any) {
       switch (error.constructor) {
         case ListNotFoundError:
-          return new ErrorResponse(404, "list not found");
+          return new ErrorResponse(StatusCode.NotFound, "list not found");
         case UnknownListItemTypeError:
-          return new ErrorResponse(400, "invalid listItem type");
+          return new ErrorResponse(StatusCode.BadRequest, "invalid listItem type");
         case UserNoAccessError:
-          return new ErrorResponse(400, "you have no access to this list");
+          return new ErrorResponse(StatusCode.BadRequest, "you have no access to this list");
         default:
           throw error;
       }

@@ -4,6 +4,7 @@ import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
+import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 import FromSchema from "../validation/FromSchema";
 
@@ -12,47 +13,52 @@ type AddListUseCase = UseCaseClass<
   { listId: Id }
 >;
 
-export default function buildAddListController(AddList: AddListUseCase) {
-  return class AddListController {
-    static requestBodySchema = {
-      token: String,
-      title: String,
-      description: String,
-    };
+type ControllerRequest = HttpRequest<
+  FromSchema<typeof AddListController.requestBodySchema>
+>;
 
-    async handle(
-      req: HttpRequest<FromSchema<typeof AddListController.requestBodySchema>>
-    ) {
-      const userId = req.auth.userId as Id;
-      try {
-        const { listId } = await this.tryToAddList(userId, req.body);
-        return new DataResponse(201, { listId: listId.toPrimitive() });
-      } catch (e) {
-        if (e instanceof InvalidListDataError)
-          return this.getListEmptyResponse();
-        else if (e instanceof UserNotFoundError)
-          return this.getUserNotExistResponse();
-        else throw e;
-      }
-    }
-
-    private async tryToAddList(
-      userId: Id,
-      body: FromSchema<typeof AddListController.requestBodySchema>
-    ) {
-      const { title, description } = body;
-      return await new AddList({
-        userId: userId,
-        list: { title, description },
-      }).execute();
-    }
-
-    private getListEmptyResponse() {
-      return new ErrorResponse(400, "list title is empty");
-    }
-
-    private getUserNotExistResponse() {
-      return new ErrorResponse(404, "user does not exist");
-    }
+export default class AddListController {
+  static requestBodySchema = {
+    token: String,
+    title: String,
+    description: String,
   };
+
+  constructor(private AddList: AddListUseCase) {}
+
+  async handle(req: ControllerRequest) {
+    try {
+      const { listId } = await this.tryToAddList(req);
+      return new DataResponse(StatusCode.Created, {
+        listId: listId.toPrimitive(),
+      });
+    } catch (e) {
+      return this.handleErrors(e);
+    }
+  }
+
+  private async tryToAddList(req: ControllerRequest) {
+    const { title, description } = req.body;
+    const userId = req.auth.userId;
+    return await new this.AddList({
+      userId,
+      list: { title, description },
+    }).execute();
+  }
+
+  private handleErrors(error: any) {
+    if (error instanceof InvalidListDataError)
+      return this.getListEmptyResponse();
+    else if (error instanceof UserNotFoundError)
+      return this.getUserNotExistResponse();
+    else throw error;
+  }
+
+  private getListEmptyResponse() {
+    return new ErrorResponse(StatusCode.BadRequest, "list title is empty");
+  }
+
+  private getUserNotExistResponse() {
+    return new ErrorResponse(StatusCode.NotFound, "user does not exist");
+  }
 }
