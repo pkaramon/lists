@@ -5,8 +5,11 @@ import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
+import ListNotFoundError from "../ListNotFoundError";
+import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import buildChangeListItemTitle from "./ChangeListItemTitle";
+import InvalidListItemIndex from "./InvalidListItemIndexError";
 
 function getTestList() {
   const list = new List({
@@ -49,7 +52,7 @@ test("list does not exist in db", async () => {
       title: "new title",
     }).execute();
 
-  await expect(fn).rejects.toThrow("list not found");
+  await expect(fn).rejects.toThrow(ListNotFoundError);
 });
 
 test("list exists but list item at specified index does not", async () => {
@@ -61,6 +64,7 @@ test("list exists but list item at specified index does not", async () => {
       title: "new title",
     }).execute();
   await expect(fn).rejects.toThrow("no list item at index: 2");
+  await expect(fn).rejects.toThrow(InvalidListItemIndex);
 });
 
 test("changing title", async () => {
@@ -96,6 +100,7 @@ describe("listDb errors", () => {
     await expect(tryToChangeListItemTitle).rejects.toThrow(
       "could not save changes"
     );
+    await expect(tryToChangeListItemTitle).rejects.toThrow(ServerError);
   });
 
   test("getById error", async () => {
@@ -103,5 +108,6 @@ describe("listDb errors", () => {
     await expect(tryToChangeListItemTitle).rejects.toThrow(
       "could not get the list"
     );
+    await expect(tryToChangeListItemTitle).rejects.toThrow(ServerError);
   });
 });

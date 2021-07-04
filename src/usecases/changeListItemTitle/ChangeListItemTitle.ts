@@ -3,7 +3,10 @@ import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
+import ListNotFoundError from "../ListNotFoundError";
+import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
+import InvalidListItemIndex from "./InvalidListItemIndexError";
 
 export default function buildChangeListItemTitle({
   listDb,
@@ -32,9 +35,9 @@ export default function buildChangeListItemTitle({
       try {
         return await listDb.getById(this.data.listId);
       } catch (e) {
-        if (e instanceof NotFoundError) throw new Error("list not found");
+        if (e instanceof NotFoundError) throw new ListNotFoundError();
         else if (e instanceof DatabaseError)
-          throw new Error("could not get the list");
+          throw new ServerError("could not get the list");
         else throw e;
       }
     }
@@ -49,7 +52,9 @@ export default function buildChangeListItemTitle({
       try {
         return list.getListItemAt(this.data.listItemIndex);
       } catch (e) {
-        throw new Error(`no list item at index: ${this.data.listItemIndex}`);
+        throw new InvalidListItemIndex(
+          `no list item at index: ${this.data.listItemIndex}`
+        );
       }
     }
 
@@ -58,7 +63,8 @@ export default function buildChangeListItemTitle({
         await listDb.save(list);
       } catch (e) {
         if (e instanceof DatabaseError)
-          throw new Error("could not save changes");
+          throw new ServerError("could not save changes");
+        else throw e;
       }
     }
   };

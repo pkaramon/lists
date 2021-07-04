@@ -2,7 +2,7 @@ import buildAddListItemController from ".";
 import { FakeUseCase, NumberId } from "../../fakes";
 import FakeIdConverter from "../../fakes/FakeIdConverter";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
-import ListNotFoundError from "../../usecases/addListItem/ListNotFoundError";
+import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import {
   expectDataToMatch,

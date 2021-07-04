@@ -1,7 +1,7 @@
 import IdConverter from "../../dataAccess/IdConverter";
 import Id from "../../domain/Id";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
-import ListNotFoundError from "../../usecases/addListItem/ListNotFoundError";
+import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";

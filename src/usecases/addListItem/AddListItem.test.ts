@@ -11,7 +11,7 @@ import UserNoAccessError from "../UserNoAccessError";
 import buildAddListItem from "./AddListItem";
 import { UnknownListItemTypeError } from "./ListItemFactory";
 import ListItemFactoryImp from "./ListItemFactoryImp";
-import ListNotFoundError from "./ListNotFoundError";
+import ListNotFoundError from "../ListNotFoundError";
 
 let listDb: ListDb;
 let AddListItem: ReturnType<typeof buildAddListItem>;

@@ -5,7 +5,7 @@ import List from "../../domain/List";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import ListItemFactory from "./ListItemFactory";
-import ListNotFoundError from "./ListNotFoundError";
+import ListNotFoundError from "../ListNotFoundError";
 
 export default function buildAddListItem({
   listDb,
