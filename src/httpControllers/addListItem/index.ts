@@ -3,9 +3,9 @@ import Id from "../../domain/Id";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
+import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
-import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
@@ -15,8 +15,7 @@ type AddListItemUseCase = UseCaseClass<{
   listItem: any;
 }>;
 
-type Request = HttpRequest<{
-  token: string;
+type Request = AuthHttpRequest<{
   listId: string | number;
   listItem: any;
 }>;

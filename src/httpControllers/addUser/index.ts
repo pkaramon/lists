@@ -3,6 +3,7 @@ import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenErro
 import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
+import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
@@ -11,9 +12,13 @@ type AddUserUseCase = UseCaseClass<
   { userId: Id }
 >;
 
-type Request = {
-  body: { name: string; password: string; email: string; birthDate: Date };
-};
+type ControllerRequest = HttpRequest<{
+  name: string;
+  password: string;
+  email: string;
+  birthDate: Date;
+}>;
+
 export default class AddUserController {
   static requestBodySchema = {
     name: String,
@@ -24,7 +29,7 @@ export default class AddUserController {
 
   constructor(private AddUser: AddUserUseCase) {}
 
-  async handle(req: Request) {
+  async handle(req: ControllerRequest) {
     try {
       const { userId } = await this.getResultFromAddUser(req.body);
       return new DataResponse(StatusCode.Created, {
@@ -42,7 +47,7 @@ export default class AddUserController {
     }
   }
 
-  private async getResultFromAddUser(body: Request["body"]) {
+  private async getResultFromAddUser(body: ControllerRequest["body"]) {
     return await new this.AddUser({
       name: body.name,
       password: body.password,

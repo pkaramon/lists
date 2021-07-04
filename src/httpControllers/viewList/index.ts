@@ -2,22 +2,18 @@ import IdConverter from "../../dataAccess/IdConverter";
 import Id from "../../domain/Id";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
+import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
-import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
 type ViewListUseCase = UseCaseClass<
-  {
-    userId: Id;
-    listId: Id;
-  },
+  { userId: Id; listId: Id },
   { title: string; description: string; length: number; listItems: any[] }
 >;
 
-type ControllerRequest = HttpRequest<{
-  token: string;
+type ControllerRequest = AuthHttpRequest<{
   listId: string | number;
 }>;
 

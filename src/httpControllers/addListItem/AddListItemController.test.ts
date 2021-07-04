@@ -5,11 +5,11 @@ import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFac
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import StatusCode from "../StatusCode";
-import  {
+import {
   expectDataToMatch,
   expectErrorMessageToBe,
   expectStatusCodeToBe,
-  MockUseCase
+  MockUseCase,
 } from "../__test__/fixtures";
 
 const controller = new AddListItemController(
@@ -32,7 +32,6 @@ function getResponse(data: {
 
   return controller.handle({
     body: {
-      token: `###${userId}###`,
       listItem,
       listId,
     },

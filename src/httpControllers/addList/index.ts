@@ -1,9 +1,9 @@
 import Id from "../../domain/Id";
 import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
 import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
+import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
-import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 import FromSchema from "../validation/FromSchema";
@@ -13,13 +13,12 @@ type AddListUseCase = UseCaseClass<
   { listId: Id }
 >;
 
-type ControllerRequest = HttpRequest<
+type ControllerRequest = AuthHttpRequest<
   FromSchema<typeof AddListController.requestBodySchema>
 >;
 
 export default class AddListController {
   static requestBodySchema = {
-    token: String,
     title: String,
     description: String,
   };

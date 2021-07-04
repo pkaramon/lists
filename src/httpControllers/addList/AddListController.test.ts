@@ -41,7 +41,7 @@ beforeEach(async () => {
 
 test("invalid list data", async () => {
   const res = await addListCtrl.handle({
-    body: { token: "###1###", title: "", description: "" },
+    body: { title: "", description: "" },
     auth: { userId },
   });
   expectStatusCodeToBe(res, StatusCode.BadRequest);
@@ -50,7 +50,7 @@ test("invalid list data", async () => {
 
 test("user does not exist", async () => {
   const res = await addListCtrl.handle({
-    body: { token: "###100###", title: "", description: "" },
+    body: { title: "", description: "" },
     auth: { userId: new NumberId(100) },
   });
   expectStatusCodeToBe(res, StatusCode.NotFound);
@@ -59,7 +59,7 @@ test("user does not exist", async () => {
 
 test("list data is valid and user exists and it authenticated", async () => {
   const res = await addListCtrl.handle({
-    body: { token: "###1###", title: "abc", description: "" },
+    body: { title: "abc", description: "" },
     auth: { userId },
   });
   expectStatusCodeToBe(res, StatusCode.Created);

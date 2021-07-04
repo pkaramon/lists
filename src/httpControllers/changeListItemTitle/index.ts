@@ -5,7 +5,7 @@ import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
-import HttpRequest from "../HttpRequest";
+import AuthHttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
 
@@ -16,8 +16,7 @@ type ChangeListItemTitle = UseCaseClass<{
   title: string;
 }>;
 
-type ControllerRequest = HttpRequest<{
-  token: string;
+type ControllerRequest = AuthHttpRequest<{
   listId: string | number;
   listItemIndex: number;
   title: string;
@@ -43,7 +42,7 @@ export default class ChangeListItemTitleController {
       listId,
       listItemIndex: req.body.listItemIndex,
       title: req.body.title,
-      userId: req["auth"]["userId"],
+      userId: req.auth.userId,
     }).execute();
   }
 
