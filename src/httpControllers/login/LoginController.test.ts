@@ -13,10 +13,10 @@ import {
   expectErrorMessageToBe,
   expectStatusCodeToBe,
 } from "../__test__/fixtures";
-import buildLoginController from "./LoginController";
+import LoginController from ".";
 
 let userDb: UserDb;
-let loginController: InstanceType<ReturnType<typeof buildLoginController>>;
+let loginController: LoginController;
 beforeEach(async () => {
   userDb = new UserDbMemory();
   Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
@@ -30,13 +30,9 @@ beforeEach(async () => {
       birthDate: new Date("2003-03-12"),
     })
   );
-  loginController = new (buildLoginController(
-    buildLogin({
-      userDb,
-      hasher,
-      tokenCreator: new FakeTokenCreator(),
-    })
-  ))();
+  loginController = new LoginController(
+    buildLogin({ userDb, hasher, tokenCreator: new FakeTokenCreator() })
+  );
 });
 
 test("invalid email or password", async () => {

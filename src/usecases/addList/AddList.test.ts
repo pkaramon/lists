@@ -1,16 +1,18 @@
-import FakeClock from "../../fakes/FakeClock";
-import FakeHasher from "../../fakes/FakeHasher";
-import ListDbMemory from "../../fakes/ListDbMemory";
-import NumberId from "../../fakes/NumberId";
-import NumberIdCreator from "../../fakes/NumberIdCreator";
-import UserDbMemory from "../../fakes/UserDbMemory";
+import DatabaseError from "../../dataAccess/DatabaseError";
+import ListDb from "../../dataAccess/ListDb";
 import Clock from "../../domain/Clock";
 import Id from "../../domain/Id";
+import {
+  FakeClock,
+  UserDbMemory,
+  ListDbMemory,
+  NumberIdCreator,
+  FakeHasher,
+  NumberId,
+} from "../../fakes";
 import buildAddUser from "../addUser/AddUser";
-import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import buildAddList from "./AddList";
-import DatabaseError from "../../dataAccess/DatabaseError";
 import InvalidListDataError from "./InvalidListDataError";
 import UserNotFoundError from "./UserNotFoundError";
 

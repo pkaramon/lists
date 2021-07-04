@@ -15,52 +15,57 @@ type AddListItemUseCase = UseCaseClass<{
   listItem: any;
 }>;
 
-export default function buildAddListItemController({
-  AddListItem,
-  idConverter,
-}: {
-  AddListItem: AddListItemUseCase;
-  idConverter: IdConverter;
-}) {
-  type Request = HttpRequest<{
-    token: string;
-    listId: string | number;
-    listItem: any;
-  }>;
+type Request = HttpRequest<{
+  token: string;
+  listId: string | number;
+  listItem: any;
+}>;
 
-  return class AddListController {
-    async handle(req: Request) {
-      try {
-        await this.tryToAddListItem(req);
-        return this.generateSuccessfulResponse();
-      } catch (e) {
-        return this.handleAddListItemErrors(e);
-      }
-    }
+export default class AddListItemController {
+  constructor(
+    private AddListItem: AddListItemUseCase,
+    private idConverter: IdConverter
+  ) {}
 
-    private async tryToAddListItem(req: Request) {
-      await new AddListItem({
-        userId: req["auth"]["userId"],
-        listId: idConverter.convert(req.body.listId),
-        listItem: req.body.listItem,
-      }).execute();
+  async handle(req: Request) {
+    try {
+      await this.tryToAddListItem(req);
+      return this.generateSuccessfulResponse();
+    } catch (e) {
+      return this.handleAddListItemErrors(e);
     }
+  }
 
-    private generateSuccessfulResponse() {
-      return new DataResponse(StatusCode.Created, { message: "created a new list item" });
-    }
+  private async tryToAddListItem(req: Request) {
+    await new this.AddListItem({
+      userId: req["auth"]["userId"],
+      listId: this.idConverter.convert(req.body.listId),
+      listItem: req.body.listItem,
+    }).execute();
+  }
 
-    private handleAddListItemErrors(error: any) {
-      switch (error.constructor) {
-        case ListNotFoundError:
-          return new ErrorResponse(StatusCode.NotFound, "list not found");
-        case UnknownListItemTypeError:
-          return new ErrorResponse(StatusCode.BadRequest, "invalid listItem type");
-        case UserNoAccessError:
-          return new ErrorResponse(StatusCode.BadRequest, "you have no access to this list");
-        default:
-          throw error;
-      }
+  private generateSuccessfulResponse() {
+    return new DataResponse(StatusCode.Created, {
+      message: "created a new list item",
+    });
+  }
+
+  private handleAddListItemErrors(error: any) {
+    switch (error.constructor) {
+      case ListNotFoundError:
+        return new ErrorResponse(StatusCode.NotFound, "list not found");
+      case UnknownListItemTypeError:
+        return new ErrorResponse(
+          StatusCode.BadRequest,
+          "invalid listItem type"
+        );
+      case UserNoAccessError:
+        return new ErrorResponse(
+          StatusCode.BadRequest,
+          "you have no access to this list"
+        );
+      default:
+        throw error;
     }
-  };
+  }
 }

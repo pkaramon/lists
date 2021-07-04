@@ -29,7 +29,7 @@ class Controller {
 test("token is invalid", async () => {
   const ctrl = new Controller();
   const response = await ctrl.handle({ body: { token: "#@13@1", n: 3 } });
-  expectStatusCodeToBe(response, StatusCode.BadRequest);
+  expectStatusCodeToBe(response, StatusCode.Unauthorized);
   expectErrorMessageToBe(response, "user token is invalid");
 });
 

@@ -7,8 +7,8 @@ import FakeHasher from "../../fakes/FakeHasher";
 import FakeTokenCreator from "../../fakes/FakeTokenCreator";
 import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
-import InvalidLoginDataError from "../../httpControllers/login/InvalidLoginDataError";
 import ServerError from "../ServerError";
+import InvalidLoginDataError from "./InvalidLoginDataError";
 import buildLogin from "./Login";
 
 const hasher = new FakeHasher();

@@ -2,9 +2,9 @@ import NotFoundError from "../../dataAccess/NotFoundError";
 import UserDb from "../../dataAccess/UserDb";
 import Id from "../../domain/Id";
 import User from "../../domain/User";
-import InvalidLoginDataError from "../../httpControllers/login/InvalidLoginDataError";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
+import InvalidLoginDataError from "./InvalidLoginDataError";
 
 export interface TokenCreator {
   create(userId: Id): Promise<string>;

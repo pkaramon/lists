@@ -1,4 +1,4 @@
-import buildAddListItemController from ".";
+import AddListItemController from ".";
 import { FakeUseCase, NumberId } from "../../fakes";
 import FakeIdConverter from "../../fakes/FakeIdConverter";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
@@ -11,10 +11,11 @@ import {
   expectStatusCodeToBe,
 } from "../__test__/fixtures";
 
-const controller = new (buildAddListItemController({
-  AddListItem: FakeUseCase,
-  idConverter: new FakeIdConverter(),
-}))();
+const controller = new AddListItemController(
+  FakeUseCase,
+  new FakeIdConverter()
+);
+
 beforeEach(() => {
   FakeUseCase.clear();
 });

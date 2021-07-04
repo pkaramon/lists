@@ -8,12 +8,12 @@ import {
   expectErrorMessageToBe,
   expectDataToMatch,
 } from "../__test__/fixtures";
-import buildAddUserController from "./AddUserController";
+import AddUserController from ".";
 
-let addUserController: InstanceType<ReturnType<typeof buildAddUserController>>;
+let addUserController: AddUserController;
 
 beforeEach(() => {
-  addUserController = new (buildAddUserController(FakeUseCase))();
+  addUserController = new AddUserController(FakeUseCase);
 });
 
 const requestBody = {

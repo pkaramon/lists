@@ -4,7 +4,7 @@ import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 
 interface Controller {
-  handle(req: { body: { token: string } }): Promise<any>;
+  handle(req: HttpRequest<any>): Promise<any>;
 }
 
 interface ControllerConstructor {
@@ -17,14 +17,21 @@ export default function buildUserAuthDecorator(tokenValidator: TokenValidator) {
   ) {
     return class extends target {
       async handle(req: HttpRequest<{ token: string }>) {
-        const token = req.body.token;
         try {
+          const token = req.body.token;
           req.auth = {};
           req.auth.userId = await tokenValidator.validate(token);
         } catch (e) {
-          return new ErrorResponse(StatusCode.BadRequest, "user token is invalid");
+          return this.getUnauthorizedResonse();
         }
         return super.handle(req);
+      }
+
+      private getUnauthorizedResonse() {
+        return new ErrorResponse(
+          StatusCode.Unauthorized,
+          "user token is invalid"
+        );
       }
     };
   };

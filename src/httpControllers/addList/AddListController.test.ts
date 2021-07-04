@@ -14,7 +14,7 @@ import {
   expectErrorMessageToBe,
   expectDataToMatch,
 } from "../__test__/fixtures";
-import AddListController from "./AddListController";
+import AddListController from ".";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let addListCtrl: AddListController;
