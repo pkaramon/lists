@@ -16,7 +16,7 @@ type AddListItemUseCase = UseCaseClass<{
 }>;
 
 type Request = AuthHttpRequest<{
-  listId: string | number;
+  listId: string;
   listItem: any;
 }>;
 

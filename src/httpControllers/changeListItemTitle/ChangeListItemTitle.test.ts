@@ -22,7 +22,7 @@ beforeEach(() => MockUseCase.clear());
 test("list does not exist", async () => {
   MockUseCase.mockError(new ListNotFoundError());
   const res = await controller.handle({
-    body: { listId: 1, listItemIndex: 0, title: "hello" },
+    body: { listId: "1", listItemIndex: 0, title: "hello" },
     auth: { userId: new NumberId(1) },
   });
   expectStatusCodeToBe(res, StatusCode.NotFound);
@@ -32,7 +32,7 @@ test("list does not exist", async () => {
 test("listItemIndex is invalid", async () => {
   MockUseCase.mockError(new InvalidListItemIndexError());
   const res = await controller.handle({
-    body: { listId: 1, listItemIndex: -1, title: "hello" },
+    body: { listId: "1", listItemIndex: -1, title: "hello" },
     auth: { userId: new NumberId(1) },
   });
   expectStatusCodeToBe(res, StatusCode.BadRequest);
@@ -42,7 +42,7 @@ test("listItemIndex is invalid", async () => {
 test("user does not have access to the list", async () => {
   MockUseCase.mockError(new UserNoAccessError());
   const res = await controller.handle({
-    body: { listId: 1, listItemIndex: -1, title: "hello" },
+    body: { listId: "1", listItemIndex: -1, title: "hello" },
     auth: { userId: new NumberId(7) },
   });
   expectStatusCodeToBe(res, StatusCode.Unauthorized);
@@ -51,7 +51,7 @@ test("user does not have access to the list", async () => {
 
 test("all data is valid", async () => {
   const res = await controller.handle({
-    body: { listId: 1, listItemIndex: 0, title: "hello" },
+    body: { listId: "1", listItemIndex: 0, title: "hello" },
     auth: { userId: new NumberId(2) },
   });
 

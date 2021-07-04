@@ -15,7 +15,7 @@ import {
 const request = Object.freeze({
   auth: { userId: new NumberId(2) },
   body: {
-    listId: 1,
+    listId: "1",
     listItemIndex: 4,
   },
 });

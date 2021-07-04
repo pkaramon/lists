@@ -17,7 +17,7 @@ type ChangeListItemTitle = UseCaseClass<{
 }>;
 
 type ControllerRequest = AuthHttpRequest<{
-  listId: string | number;
+  listId: string;
   listItemIndex: number;
   title: string;
 }>;

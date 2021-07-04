@@ -33,7 +33,7 @@ function getResponse(data: {
   return controller.handle({
     body: {
       listItem,
-      listId,
+      listId: listId.toString(),
     },
     auth: { userId: new NumberId(userId) },
   });
