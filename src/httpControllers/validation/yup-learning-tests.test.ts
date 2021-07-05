@@ -47,6 +47,7 @@ test("getting invalid properties", async () => {
     );
     fail("should have failed");
   } catch (e) {
+    expect(e.path).toBeUndefined();
     const errors = e.inner as yup.ValidationError[];
     const invalidProperties = errors.map((e) => e.path!);
     expect(invalidProperties).toEqual([
@@ -55,6 +56,34 @@ test("getting invalid properties", async () => {
       "address.city",
     ]);
     expect(errors).toHaveLength(3);
+  }
+});
+
+test("data is not an object", async () => {
+  try {
+    await schema.validate("asdf");
+    fail("should have failed");
+  } catch (e) {
+    expect(e.path).toBe("");
+  }
+});
+
+test("nested object is not an object", async () => {
+  try {
+    await schema.validate(
+      {
+        name: "",
+        age: 42,
+        address: "asdf",
+      },
+      { abortEarly: false }
+    );
+    fail("should have failed");
+  } catch (e) {
+    expect(e.path).toBeUndefined();
+    const errors = e.inner as yup.ValidationError[];
+    const invalidProperties = errors.map((e) => e.path!);
+    expect(invalidProperties).toEqual(["name", "address"]);
   }
 });
 
@@ -82,3 +111,6 @@ test("strict", async () => {
   expect(await schema.isValid({ name: 42, age: 42 })).toBe(false);
   expect(await schema.isValid({ name: "bob", age: "42" })).toBe(false);
 });
+
+test('dates', ()=> {
+})

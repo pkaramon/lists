@@ -1,12 +1,12 @@
-import FromSchema from "../FromSchema";
+import FromShape from "../FromShape";
 import BodyIsNotAnObjectError from "./BodyIsNotAnObjectError";
 import RequestBodyError from "./RequestBodyError";
-import Schema from "../Schema";
+import Shape from "../Shape";
 
-export default class RequestBodyValidatorImp<SchemaType extends Schema> {
-  constructor(private schema: SchemaType) {}
+export default class RequestBodyValidatorImp<ShapeType extends Shape> {
+  constructor(private schema: ShapeType) {}
 
-  validate(body: any): FromSchema<SchemaType> {
+  validate(body: any): FromShape<ShapeType> {
     this.checkIfBodyIsAnObject(body);
     this.validateKeys(body);
     return this.preprocessBody(body);

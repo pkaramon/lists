@@ -16,7 +16,7 @@ const controller = new ViewListController(MockUseCase, new FakeIdConverter());
 test("list does not exist", async () => {
   MockUseCase.mockError(new ListNotFoundError());
   const response = await controller.handle({
-    body: { listId: 1 },
+    body: { listId: "1" },
     auth: { userId: new NumberId(1) },
   });
   expectStatusCodeToBe(response, StatusCode.NotFound);
@@ -26,7 +26,7 @@ test("list does not exist", async () => {
 test("list exists but user does not have access to the list", async () => {
   MockUseCase.mockError(new UserNoAccessError());
   const response = await controller.handle({
-    body: { listId: 1 },
+    body: { listId: "1" },
     auth: { userId: new NumberId(1) },
   });
   expectStatusCodeToBe(response, StatusCode.Unauthorized);
@@ -43,7 +43,7 @@ test("list exists", async () => {
   MockUseCase.mockResult(useCaseResult);
 
   const response = await controller.handle({
-    body: { listId: 1 },
+    body: { listId: "1" },
     auth: { userId: new NumberId(2) },
   });
 

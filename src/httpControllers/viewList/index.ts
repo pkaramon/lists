@@ -14,7 +14,7 @@ type ViewListUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = AuthHttpRequest<{
-  listId: string | number;
+  listId: string;
 }>;
 
 export default class ViewListController {

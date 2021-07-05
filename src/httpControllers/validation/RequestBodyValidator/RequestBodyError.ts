@@ -1,15 +1,15 @@
-import { SchemaType } from "../Schema";
+import { ShapeType } from "../Shape";
 
 export default class RequestBodyError extends Error {
   constructor(
     public missingProps: string[],
     public propsWithInvalidTypes: {
       key: string;
-      wanted: SchemaType;
-      got: SchemaType;
+      wanted: ShapeType;
+      got: ShapeType;
     }[]
   ) {
-    super("schema validation failed");
+    super("shape validation failed");
     this.name = RequestBodyError.name;
   }
 

@@ -6,7 +6,7 @@ import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromSchema from "../validation/FromSchema";
+import FromShape from "../validation/FromShape";
 
 type AddListUseCase = UseCaseClass<
   { userId: Id; list: { title: string; description: string } },
@@ -14,8 +14,9 @@ type AddListUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = AuthHttpRequest<
-  FromSchema<typeof AddListController.requestBodySchema>
+  FromShape<typeof AddListController.requestBodySchema>
 >;
+
 
 export default class AddListController {
   static requestBodySchema = {
