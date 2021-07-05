@@ -13,7 +13,7 @@ type LoginUseCase = UseCaseClass<
 type ControllerRequest = HttpRequest<{ email: string; password: string }>;
 
 export default class LoginController {
-  static requestBodySchema = {
+  static requestBodyShape = {
     email: String,
     password: String,
   };

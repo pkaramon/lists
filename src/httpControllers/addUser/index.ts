@@ -20,7 +20,7 @@ type ControllerRequest = HttpRequest<{
 }>;
 
 export default class AddUserController {
-  static requestBodySchema = {
+  static requestBodyShape = {
     name: String,
     password: String,
     email: String,

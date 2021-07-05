@@ -14,12 +14,12 @@ type AddListUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = AuthHttpRequest<
-  FromShape<typeof AddListController.requestBodySchema>
+  FromShape<typeof AddListController.requestBodyShape>
 >;
 
 
 export default class AddListController {
-  static requestBodySchema = {
+  static requestBodyShape = {
     title: String,
     description: String,
   };
