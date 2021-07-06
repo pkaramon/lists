@@ -59,9 +59,9 @@ test("view list", async () => {
     description: "list desc",
     length: 3,
     listItems: [
-      { title: "first" },
-      { title: "second", description: "desc" },
-      { title: "third", checked: false },
+      { type: "text", title: "first" },
+      { type: "detailed", title: "second", description: "desc" },
+      { type: "checkbox", title: "third", checked: false },
     ],
   });
 });

@@ -1,5 +1,5 @@
 import Clock from "../domain/Clock";
-import { FakeHasher, UserDbMemory, ListDbMemory } from "../fakes";
+import { UserDbMemory, ListDbMemory } from "../fakes";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
 import AddUserController from "../httpControllers/addUser";
@@ -10,6 +10,7 @@ import buildUserAuthDecorator from "../httpControllers/UserAuthDecorator";
 import ObjectValidatorYup from "../httpControllers/validation/ObjectValidatorYup";
 import buildRequestBodyValidator from "../httpControllers/validation/RequestBodyValidator/RequestBodyValidator";
 import ViewListController from "../httpControllers/viewList";
+import BcryptHasher from "../impl/BcryptHasher";
 import JWTokenCreator from "../impl/JWT/JWTokenCreator";
 import JWTokenValidator from "../impl/JWT/JWTokenValidator";
 import UUIDConverter from "../impl/UUID/UUIDConverter";
@@ -30,8 +31,7 @@ Clock.inst = {
 };
 
 const privateKey = "eed17796-e36d-439b-92b2-da2426d87869";
-
-const hasher = new FakeHasher();
+const hasher = new BcryptHasher(5);
 const userDb = new UserDbMemory();
 const listDb = new ListDbMemory();
 const userIdCreator = new UUIDCreator();

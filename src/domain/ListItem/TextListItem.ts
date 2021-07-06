@@ -7,6 +7,7 @@ export default class TextListItem extends ListItem {
 
   toDataObject() {
     return {
+      type: "text",
       title: this.title,
     };
   }

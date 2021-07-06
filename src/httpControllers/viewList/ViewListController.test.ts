@@ -38,7 +38,10 @@ test("list exists", async () => {
     title: "t",
     description: "d",
     length: 2,
-    listItems: [{ title: "hello" }, { title: "hello", checked: false }],
+    listItems: [
+      { type: "text", title: "hello" },
+      { type: "checkbox", title: "hello", checked: false },
+    ],
   };
   MockUseCase.mockResult(useCaseResult);
 

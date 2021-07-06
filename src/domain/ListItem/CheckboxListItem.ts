@@ -11,6 +11,7 @@ export default class CheckBoxListItem extends ListItem {
 
   toDataObject() {
     return {
+      type: "checkbox",
       title: this.title,
       checked: this._checked,
     };

@@ -11,6 +11,7 @@ export default class DetailedListItem extends ListItem {
 
   toDataObject() {
     return {
+      type: 'detailed',
       title: this.title,
       description: this._description,
     };
