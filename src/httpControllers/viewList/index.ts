@@ -7,17 +7,22 @@ import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
+import FromShape from "../validation/FromShape";
 
 type ViewListUseCase = UseCaseClass<
   { userId: Id; listId: Id },
   { title: string; description: string; length: number; listItems: any[] }
 >;
 
-type ControllerRequest = AuthHttpRequest<{
-  listId: string;
-}>;
+type ControllerRequest = AuthHttpRequest<
+  FromShape<typeof ViewListController.requestBodyShape>
+>;
 
 export default class ViewListController {
+  static requestBodyShape = {
+    listId: String,
+  };
+
   constructor(
     private ViewList: ViewListUseCase,
     private idConverter: IdConverter

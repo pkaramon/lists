@@ -18,7 +18,7 @@ export default function buildUserAuthDecorator(tokenValidator: TokenValidator) {
     return class extends target {
       async handle(req: HttpRequest<{ token: string }>) {
         try {
-          const token = req.body.token;
+          const token = req.headers.authorization || "";
           req.auth = {};
           req.auth.userId = await tokenValidator.validate(token);
         } catch (e) {

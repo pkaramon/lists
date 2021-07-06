@@ -6,18 +6,16 @@ import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
+import FromShape from "../validation/FromShape";
 
 type AddUserUseCase = UseCaseClass<
   { name: string; email: string; password: string; birthDate: Date },
   { userId: Id }
 >;
 
-type ControllerRequest = HttpRequest<{
-  name: string;
-  password: string;
-  email: string;
-  birthDate: Date;
-}>;
+type ControllerRequest = HttpRequest<
+  FromShape<typeof AddUserController.requestBodyShape>
+>;
 
 export default class AddUserController {
   static requestBodyShape = {

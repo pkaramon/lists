@@ -17,7 +17,6 @@ type ControllerRequest = AuthHttpRequest<
   FromShape<typeof AddListController.requestBodyShape>
 >;
 
-
 export default class AddListController {
   static requestBodyShape = {
     title: String,

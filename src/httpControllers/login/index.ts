@@ -4,13 +4,16 @@ import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
+import FromShape from "../validation/FromShape";
 
 type LoginUseCase = UseCaseClass<
   { email: string; password: string },
   { userToken: string }
 >;
 
-type ControllerRequest = HttpRequest<{ email: string; password: string }>;
+type ControllerRequest = HttpRequest<
+  FromShape<typeof LoginController.requestBodyShape>
+>;
 
 export default class LoginController {
   static requestBodyShape = {

@@ -21,6 +21,13 @@ type Request = AuthHttpRequest<{
 }>;
 
 export default class AddListItemController {
+  static requestBodyShape = {
+    listId: String,
+    listItem: {
+      title: String,
+    },
+  };
+
   constructor(
     private AddListItem: AddListItemUseCase,
     private idConverter: IdConverter
@@ -37,7 +44,7 @@ export default class AddListItemController {
 
   private async tryToAddListItem(req: Request) {
     await new this.AddListItem({
-      userId: req["auth"]["userId"],
+      userId: req.auth.userId, 
       listId: this.idConverter.convert(req.body.listId),
       listItem: req.body.listItem,
     }).execute();

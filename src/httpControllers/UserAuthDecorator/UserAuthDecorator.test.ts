@@ -1,6 +1,7 @@
 import buildUserAuthDecorator from ".";
 import Id from "../../domain/Id";
-import {FakeTokenValidator} from "../../fakes";
+import { FakeTokenValidator } from "../../fakes";
+import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
@@ -13,10 +14,9 @@ import {
 
 const UserAuthDecorator = buildUserAuthDecorator(new FakeTokenValidator());
 
-@UserAuthDecorator
 class Controller {
   async handle(
-    req: HttpRequest<{ token: string; n: number }>
+    req: AuthHttpRequest<{ n: number }>
   ): Promise<DataResponse | ErrorResponse> {
     const userId = req.auth.userId as Id;
     return new DataResponse(StatusCode.Ok, {
@@ -26,16 +26,28 @@ class Controller {
   }
 }
 
+const ctrl = new (UserAuthDecorator(Controller))();
+
+test("token is not present", async () => {
+  const req = { body: { n: 3 }, headers: {} } as any;
+  const response = await ctrl.handle(req);
+  expectStatusCodeToBe(response, StatusCode.Unauthorized);
+  expectErrorMessageToBe(response, "user token is invalid");
+});
+
 test("token is invalid", async () => {
-  const ctrl = new Controller();
-  const response = await ctrl.handle({ body: { token: "#@13@1", n: 3 } });
+  const req = {
+    body: { n: 3 },
+    headers: { authorization: "#*#3.14*@" },
+  } as any;
+  const response = await ctrl.handle(req);
   expectStatusCodeToBe(response, StatusCode.Unauthorized);
   expectErrorMessageToBe(response, "user token is invalid");
 });
 
 test("token is valid", async () => {
-  const ctrl = new Controller();
-  const response = await ctrl.handle({ body: { token: "###1###", n: 3 } });
+  const req = { body: { n: 3 }, headers: { authorization: "###1###" } } as any;
+  const response = await ctrl.handle(req);
   expectStatusCodeToBe(response, StatusCode.Ok);
   expectDataToMatch(response, { result: 9, userId: 1 });
 });

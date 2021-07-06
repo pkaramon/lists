@@ -8,6 +8,7 @@ import ErrorResponse from "../ErrorResponse";
 import AuthHttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
+import FromShape from "../validation/FromShape";
 
 type ChangeListItemTitle = UseCaseClass<{
   userId: Id;
@@ -16,13 +17,17 @@ type ChangeListItemTitle = UseCaseClass<{
   title: string;
 }>;
 
-type ControllerRequest = AuthHttpRequest<{
-  listId: string;
-  listItemIndex: number;
-  title: string;
-}>;
+type ControllerRequest = AuthHttpRequest<
+  FromShape<typeof ChangeListItemTitleController.requestBodyShape>
+>;
 
 export default class ChangeListItemTitleController {
+  static requestBodyShape = {
+    listId: String,
+    listItemIndex: Number,
+    title: String,
+  };
+
   constructor(
     private ChangeListItemTitle: ChangeListItemTitle,
     private idConverter: IdConverter
