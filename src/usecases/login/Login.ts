@@ -37,7 +37,7 @@ export default function buildLogin({
     }
 
     private async doPasswordsMatch(user: User) {
-      return user.password === (await hasher.hash(this.data.password));
+      return await hasher.compare(this.data.password, user.password);
     }
 
     private handleError(e: Error): never {

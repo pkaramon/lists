@@ -1,13 +1,5 @@
 import Clock from "../domain/Clock";
-import {
-  FakeHasher,
-  UserDbMemory,
-  ListDbMemory,
-  NumberIdCreator,
-  FakeTokenCreator,
-  FakeTokenValidator,
-} from "../fakes";
-import NumberIdConverter from "../fakes/NumberIdConverter";
+import { FakeHasher, UserDbMemory, ListDbMemory } from "../fakes";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
 import AddUserController from "../httpControllers/addUser";
@@ -18,6 +10,10 @@ import buildUserAuthDecorator from "../httpControllers/UserAuthDecorator";
 import ObjectValidatorYup from "../httpControllers/validation/ObjectValidatorYup";
 import buildRequestBodyValidator from "../httpControllers/validation/RequestBodyValidator/RequestBodyValidator";
 import ViewListController from "../httpControllers/viewList";
+import JWTokenCreator from "../impl/JWT/JWTokenCreator";
+import JWTokenValidator from "../impl/JWT/JWTokenValidator";
+import UUIDConverter from "../impl/UUID/UUIDConverter";
+import UUIDCreator from "../impl/UUID/UUIDCreator";
 import buildAddList from "../usecases/addList/AddList";
 import buildAddListItem from "../usecases/addListItem/AddListItem";
 import ListItemFactoryImp from "../usecases/addListItem/ListItemFactoryImp";
@@ -32,14 +28,18 @@ Clock.inst = {
     return new Date();
   },
 };
+
+const privateKey = "eed17796-e36d-439b-92b2-da2426d87869";
+
 const hasher = new FakeHasher();
 const userDb = new UserDbMemory();
 const listDb = new ListDbMemory();
-const userIdCreator = new NumberIdCreator();
-const listIDCreator = new NumberIdCreator();
-const idConverter = new NumberIdConverter();
-const tokenCreator = new FakeTokenCreator();
-const UserAuthDecorator = buildUserAuthDecorator(new FakeTokenValidator());
+const userIdCreator = new UUIDCreator();
+const listICreator = new UUIDCreator();
+const idConverter = new UUIDConverter();
+const tokenCreator = new JWTokenCreator(privateKey);
+const tokenValidator = new JWTokenValidator(privateKey, idConverter);
+const UserAuthDecorator = buildUserAuthDecorator(tokenValidator);
 const RequestBodyValidator = buildRequestBodyValidator(ObjectValidatorYup);
 
 export function setupAddUserController() {
@@ -55,7 +55,7 @@ export function setupAddUserController() {
 }
 
 export function setupAddListController() {
-  const AddList = buildAddList({ userDb, idCreator: listIDCreator, listDb });
+  const AddList = buildAddList({ userDb, idCreator: listICreator, listDb });
   const controller = new (UserAuthDecorator(
     RequestBodyValidator(AddListController)
   ))(AddList);

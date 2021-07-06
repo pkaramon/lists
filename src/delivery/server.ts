@@ -18,7 +18,6 @@ interface Controller {
 
 function httpControllerToExpress(ctrl: Controller) {
   return (req: Request, res: Response) => {
-    console.log("headers", req.headers);
     ctrl
       .handle({ body: req.body, headers: req.headers })
       .then((result) => {
