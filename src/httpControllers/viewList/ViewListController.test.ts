@@ -1,6 +1,6 @@
 import ViewListController from ".";
 import { NumberId } from "../../fakes";
-import FakeIdConverter from "../../fakes/FakeIdConverter";
+import NumberIdConverter from "../../fakes/NumberIdConverter";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import StatusCode from "../StatusCode";
@@ -11,7 +11,7 @@ import {
   MockUseCase,
 } from "../__test__/fixtures";
 
-const controller = new ViewListController(MockUseCase, new FakeIdConverter());
+const controller = new ViewListController(MockUseCase, new NumberIdConverter());
 
 test("list does not exist", async () => {
   MockUseCase.mockError(new ListNotFoundError());

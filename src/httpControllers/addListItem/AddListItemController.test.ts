@@ -1,6 +1,6 @@
 import AddListItemController from ".";
 import { NumberId } from "../../fakes";
-import FakeIdConverter from "../../fakes/FakeIdConverter";
+import NumberIdConverter from "../../fakes/NumberIdConverter";
 import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
@@ -14,7 +14,7 @@ import {
 
 const controller = new AddListItemController(
   MockUseCase,
-  new FakeIdConverter()
+  new NumberIdConverter()
 );
 
 beforeEach(() => {

@@ -7,7 +7,7 @@ import {
   FakeTokenCreator,
   FakeTokenValidator,
 } from "../fakes";
-import FakeIdConverter from "../fakes/FakeIdConverter";
+import NumberIdConverter from "../fakes/NumberIdConverter";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
 import AddUserController from "../httpControllers/addUser";
@@ -37,7 +37,7 @@ const userDb = new UserDbMemory();
 const listDb = new ListDbMemory();
 const userIdCreator = new NumberIdCreator();
 const listIDCreator = new NumberIdCreator();
-const idConverter = new FakeIdConverter();
+const idConverter = new NumberIdConverter();
 const tokenCreator = new FakeTokenCreator();
 const UserAuthDecorator = buildUserAuthDecorator(new FakeTokenValidator());
 const RequestBodyValidator = buildRequestBodyValidator(ObjectValidatorYup);

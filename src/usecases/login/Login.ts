@@ -1,14 +1,10 @@
+import TokenCreator from "../../auth/TokenCreator";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import UserDb from "../../dataAccess/UserDb";
-import Id from "../../domain/Id";
 import User from "../../domain/User";
 import Hasher from "../Hasher";
 import ServerError from "../ServerError";
 import InvalidLoginDataError from "./InvalidLoginDataError";
-
-export interface TokenCreator {
-  create(userId: Id): Promise<string>;
-}
 
 export default function buildLogin({
   userDb,

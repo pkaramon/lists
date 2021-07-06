@@ -1,6 +1,6 @@
 import ChangeListItemTitleController from ".";
 import { NumberId } from "../../fakes";
-import FakeIdConverter from "../../fakes/FakeIdConverter";
+import NumberIdConverter from "../../fakes/NumberIdConverter";
 import InvalidListItemIndexError from "../../usecases/InvalidListItemIndexError";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
@@ -14,7 +14,7 @@ import {
 
 const controller = new ChangeListItemTitleController(
   MockUseCase,
-  new FakeIdConverter()
+  new NumberIdConverter()
 );
 
 beforeEach(() => MockUseCase.clear());
