@@ -16,6 +16,7 @@ export default function buildViewList({
 }) {
   return class ViewList {
     constructor(private data: { userId: Id; listId: Id }) {}
+
     async execute() {
       const list = await this.getList();
       this.checkIfUserHasAccess(list);

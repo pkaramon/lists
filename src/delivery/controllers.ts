@@ -1,5 +1,5 @@
 import Clock from "../domain/Clock";
-import { UserDbMemory, ListDbMemory } from "../fakes";
+import ListItemGatewayImp from "../domain/ListItemGateway/ListItemGatewayImp";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
 import AddUserController from "../httpControllers/addUser";
@@ -13,11 +13,12 @@ import ViewListController from "../httpControllers/viewList";
 import BcryptHasher from "../impl/BcryptHasher";
 import JWTokenCreator from "../impl/JWT/JWTokenCreator";
 import JWTokenValidator from "../impl/JWT/JWTokenValidator";
+import MongoListDb from "../impl/MongoDatabase/MongoListDb";
+import MongoUserDb from "../impl/MongoDatabase/MongoUserDb";
 import UUIDConverter from "../impl/UUID/UUIDConverter";
 import UUIDCreator from "../impl/UUID/UUIDCreator";
 import buildAddList from "../usecases/addList/AddList";
 import buildAddListItem from "../usecases/addListItem/AddListItem";
-import ListItemFactoryImp from "../usecases/addListItem/ListItemFactoryImp";
 import buildAddUser from "../usecases/addUser/AddUser";
 import buildChangeListItemTitle from "../usecases/changeListItemTitle/ChangeListItemTitle";
 import buildDeleteListItem from "../usecases/deleteListItem/DeleteListItem";
@@ -32,11 +33,33 @@ Clock.inst = {
 
 const privateKey = "eed17796-e36d-439b-92b2-da2426d87869";
 const hasher = new BcryptHasher(5);
-const userDb = new UserDbMemory();
-const listDb = new ListDbMemory();
 const userIdCreator = new UUIDCreator();
 const listICreator = new UUIDCreator();
 const idConverter = new UUIDConverter();
+
+const listItemGateway = new ListItemGatewayImp();
+
+const userDb = new MongoUserDb(
+  {
+    uri: "mongodb://localhost:27017",
+    databaseName: "lists",
+    collectionName: "users",
+  },
+  { idConverter }
+);
+const listDb = new MongoListDb(
+  {
+    uri: "mongodb://localhost:27017",
+    databaseName: "lists",
+    collectionName: "users",
+  },
+  {
+    listItemGateway,
+    listIdConverter: idConverter,
+    userIdConverter: idConverter,
+  }
+);
+
 const tokenCreator = new JWTokenCreator(privateKey);
 const tokenValidator = new JWTokenValidator(privateKey, idConverter);
 const UserAuthDecorator = buildUserAuthDecorator(tokenValidator);
@@ -65,7 +88,7 @@ export function setupAddListController() {
 export function setupAddListItemController() {
   const AddListItem = buildAddListItem({
     listDb,
-    listItemGateway: new ListItemFactoryImp(),
+    listItemGateway,
   });
   const Controller = UserAuthDecorator(
     RequestBodyValidator(AddListItemController)
@@ -96,7 +119,7 @@ export function setupLoginController() {
 }
 
 export function setupViewList() {
-  const ViewList = buildViewList({ listDb });
+  const ViewList = buildViewList({ listDb, listItemGateway });
   const Controller = UserAuthDecorator(
     RequestBodyValidator(ViewListController)
   );
