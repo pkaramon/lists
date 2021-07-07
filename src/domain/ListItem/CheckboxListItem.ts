@@ -8,12 +8,4 @@ export default class CheckBoxListItem extends ListItem {
   get checked() {
     return this._checked;
   }
-
-  toDataObject() {
-    return {
-      type: "checkbox",
-      title: this.title,
-      checked: this._checked,
-    };
-  }
 }

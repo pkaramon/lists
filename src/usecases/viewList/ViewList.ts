@@ -1,13 +1,19 @@
-import DatabaseError from "../../dataAccess/DatabaseError";
 import ListDb from "../../dataAccess/ListDb";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
+import ListItemGateway from "../../domain/ListItemGateway";
 import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 
-export default function buildViewList({ listDb }: { listDb: ListDb }) {
+export default function buildViewList({
+  listDb,
+  listItemGateway,
+}: {
+  listDb: ListDb;
+  listItemGateway: ListItemGateway;
+}) {
   return class ViewList {
     constructor(private data: { userId: Id; listId: Id }) {}
     async execute() {
@@ -40,7 +46,7 @@ export default function buildViewList({ listDb }: { listDb: ListDb }) {
     private getDataObjects(list: List) {
       const dataObjects = [];
       for (const listItem of list) {
-        dataObjects.push(listItem.toDataObject());
+        dataObjects.push(listItemGateway.fromObjectToData(listItem));
       }
       return dataObjects;
     }

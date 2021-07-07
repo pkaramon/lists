@@ -4,15 +4,15 @@ import Id from "../../domain/Id";
 import List from "../../domain/List";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-import ListItemFactory from "./ListItemFactory";
 import ListNotFoundError from "../ListNotFoundError";
+import ListItemGateway from "../../domain/ListItemGateway";
 
 export default function buildAddListItem({
   listDb,
-  listItemFactory,
+  listItemGateway: listItemFactory,
 }: {
   listDb: ListDb;
-  listItemFactory: ListItemFactory;
+  listItemGateway: ListItemGateway;
 }) {
   return class AddListItem {
     constructor(private data: { userId: Id; listId: Id; listItem: any }) {}
@@ -20,7 +20,7 @@ export default function buildAddListItem({
     async execute() {
       const list = await this.getList();
       this.checkIfUserHasAccess(list);
-      const listItem = listItemFactory.createListItem(this.data.listItem);
+      const listItem = listItemFactory.fromDataToObject(this.data.listItem);
       list.addListItem(listItem);
       await this.saveModifiedList(list);
     }

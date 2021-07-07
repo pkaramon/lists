@@ -1,7 +1,7 @@
 import AddListItemController from ".";
+import {UnknownListItemTypeError} from "../../domain/ListItemGateway";
 import { NumberId } from "../../fakes";
 import NumberIdConverter from "../../fakes/NumberIdConverter";
-import { UnknownListItemTypeError } from "../../usecases/addListItem/ListItemFactory";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import StatusCode from "../StatusCode";

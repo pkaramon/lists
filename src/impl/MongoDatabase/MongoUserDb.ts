@@ -4,7 +4,7 @@ import User from "../../domain/User";
 import mongo from "mongodb";
 import IdConverter from "../../dataAccess/IdConverter";
 import NotFoundError from "../../dataAccess/NotFoundError";
-import DatabaseError from "../../dataAccess/DatabaseError";
+import MongoDb, { mongoDbErrorsGuard } from "./MongoDb";
 
 interface UserData {
   _id: string;
@@ -14,33 +14,17 @@ interface UserData {
   birthDate: Date;
 }
 
-function mongoDbErrorsGuard(
-  _: any,
-  __: string,
-  descriptor: PropertyDescriptor
-) {
-  const originalMethod = descriptor.value! as Function;
-  descriptor.value = async function () {
-    try {
-      return await originalMethod.apply(this, arguments);
-    } catch (e) {
-      if (e instanceof NotFoundError) throw e;
-      else throw new DatabaseError();
-    }
-  };
-}
-
-export default class MongoUserDb implements UserDb {
-  private client?: mongo.MongoClient;
-
+export default class MongoUserDb extends MongoDb<UserData> implements UserDb {
   constructor(
-    private data: { uri: string; databaseName: string; collectionName: string },
+    data: { uri: string; databaseName: string; collectionName: string },
     private utils: { idConverter: IdConverter }
-  ) {}
+  ) {
+    super(data);
+  }
 
   @mongoDbErrorsGuard
   async save(u: User): Promise<void> {
-    const collection = await this.getUsersCollection();
+    const collection = await this.getCollection();
     const data = this.createUserDataFromUser(u);
     await collection.insertOne(data, { forceServerObjectId: true });
   }
@@ -57,34 +41,15 @@ export default class MongoUserDb implements UserDb {
 
   @mongoDbErrorsGuard
   async deleteById(id: Id): Promise<void> {
-    const collection = await this.getUsersCollection();
+    const collection = await this.getCollection();
     const { result } = await collection.deleteOne({ _id: this.idToString(id) });
     const numberOfDeleted = result.n ?? 0;
     if (numberOfDeleted === 0) throw new NotFoundError();
   }
 
   private async findUser(filter: mongo.FilterQuery<UserData>) {
-    const collection = await this.getUsersCollection();
-    const userData = await collection.findOne(filter);
-    if (userData === null) throw new NotFoundError();
+    const userData = await this.findOne(filter);
     return this.constructUserFromUserData(userData);
-  }
-
-  private async getUsersCollection() {
-    const client = await this.getClient();
-    const db = client.db(this.data.databaseName);
-    return db.collection<UserData>(this.data.collectionName);
-  }
-
-  private async getClient() {
-    if (this.client === undefined) {
-      return mongo.connect(this.data.uri, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      });
-    } else {
-      return this.client;
-    }
   }
 
   private constructUserFromUserData(userData: UserData) {
@@ -109,11 +74,5 @@ export default class MongoUserDb implements UserDb {
 
   private idToString(id: Id) {
     return id.toPrimitive().toString();
-  }
-
-  @mongoDbErrorsGuard
-  public async TESTS_ONLY_clear() {
-    const client = await this.getClient();
-    await client.db(this.data.databaseName).dropDatabase();
   }
 }

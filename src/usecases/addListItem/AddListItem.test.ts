@@ -9,9 +9,9 @@ import { NumberId, ListDbMemory } from "../../fakes";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
 import buildAddListItem from "./AddListItem";
-import { UnknownListItemTypeError } from "./ListItemFactory";
-import ListItemFactoryImp from "./ListItemFactoryImp";
 import ListNotFoundError from "../ListNotFoundError";
+import ListItemGatewayImp from "../../domain/ListItemGateway/ListItemGatewayImp";
+import { UnknownListItemTypeError } from "../../domain/ListItemGateway";
 
 let listDb: ListDb;
 let AddListItem: ReturnType<typeof buildAddListItem>;
@@ -21,7 +21,7 @@ beforeEach(async () => {
   listDb = new ListDbMemory();
   AddListItem = buildAddListItem({
     listDb,
-    listItemFactory: new ListItemFactoryImp(),
+    listItemGateway: new ListItemGatewayImp(),
   });
   await listDb.save(
     new List({

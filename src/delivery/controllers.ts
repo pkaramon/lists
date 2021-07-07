@@ -65,7 +65,7 @@ export function setupAddListController() {
 export function setupAddListItemController() {
   const AddListItem = buildAddListItem({
     listDb,
-    listItemFactory: new ListItemFactoryImp(),
+    listItemGateway: new ListItemFactoryImp(),
   });
   const Controller = UserAuthDecorator(
     RequestBodyValidator(AddListItemController)

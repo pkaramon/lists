@@ -4,6 +4,7 @@ import List from "../../domain/List";
 import CheckBoxListItem from "../../domain/ListItem/CheckboxListItem";
 import DetailedListItem from "../../domain/ListItem/DetailedListItem";
 import TextListItem from "../../domain/ListItem/TextListItem";
+import ListItemGatewayImp from "../../domain/ListItemGateway/ListItemGatewayImp";
 import ListDbMemory from "../../fakes/ListDbMemory";
 import NumberId from "../../fakes/NumberId";
 import ListNotFoundError from "../ListNotFoundError";
@@ -15,7 +16,10 @@ let listDb: ListDb;
 let ViewList: ReturnType<typeof buildViewList>;
 beforeEach(async () => {
   listDb = new ListDbMemory();
-  ViewList = buildViewList({ listDb });
+  ViewList = buildViewList({
+    listDb,
+    listItemGateway: new ListItemGatewayImp(),
+  });
 
   const list = new List({
     id: new NumberId(1),
