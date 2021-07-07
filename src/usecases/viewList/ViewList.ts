@@ -23,7 +23,7 @@ export default function buildViewList({
         title: list.title,
         description: list.description,
         length: list.length,
-        listItems: this.getDataObjects(list),
+        listItems: this.getListItemsData(list),
       };
     }
 
@@ -43,12 +43,12 @@ export default function buildViewList({
       }
     }
 
-    private getDataObjects(list: List) {
-      const dataObjects = [];
+    private getListItemsData(list: List) {
+      const listItemsData = [];
       for (const listItem of list) {
-        dataObjects.push(listItemGateway.fromObjectToData(listItem));
+        listItemsData.push(listItemGateway.fromObjectToData(listItem));
       }
-      return dataObjects;
+      return listItemsData;
     }
   };
 }
