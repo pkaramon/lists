@@ -38,7 +38,7 @@ export default function buildAddList({
         await userDb.getById(this.data.userId);
       } catch (e) {
         if (e instanceof NotFoundError) throw new UserNotFoundError();
-        if (e instanceof DatabaseError) throw new ServerError();
+        else throw new ServerError();
       }
     }
 

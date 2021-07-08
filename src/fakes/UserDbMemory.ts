@@ -30,8 +30,4 @@ export default class UserDbMemory implements UserDb {
     const user = this.users.get(id.toPrimitive());
     if (user === undefined) throw new NotFoundError("user does not exist");
   }
-
-  clear() {
-    this.users = new Map();
-  }
 }

@@ -80,10 +80,22 @@ test("unexpected userDb error", async () => {
   await expect(fn).rejects.toThrowError(ServerError);
 });
 
-test("unexpected listDb error", async () => {
-  listDb.save = () => {
-    throw new DatabaseError("db err");
-  };
-  const fn = async () => await new AddList({ userId, ...listData }).execute();
-  await expect(fn).rejects.toThrowError(ServerError);
+const errorFn = async () => {
+  throw new DatabaseError();
+};
+
+async function expectToThrowServerError() {
+  await expect(() =>
+    new AddList({ userId, ...listData }).execute()
+  ).rejects.toThrowError(ServerError);
+}
+
+test("listDb.save DatabaseError", async () => {
+  listDb.save = errorFn;
+  await expectToThrowServerError();
+});
+
+test("userDb.getById DatabaseError", async () => {
+  userDb.getById = errorFn;
+  await expectToThrowServerError();
 });

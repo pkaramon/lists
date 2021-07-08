@@ -26,10 +26,8 @@ type ImpListData =
   | CheckBoxListItemData
   | DetailedListItemData;
 
-export default class ListItemFactoryImp implements ListItemGateway {
-  fromDataToObject(
-    data: TextListItemData | CheckBoxListItemData | DetailedListItemData
-  ): ListItem {
+export default class ListItemGatewayImp implements ListItemGateway {
+  fromDataToObject(data: ImpListData): ListItem {
     switch (data.type) {
       case "text":
         return new TextListItem(data.title);

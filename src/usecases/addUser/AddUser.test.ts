@@ -1,4 +1,5 @@
 import DatabaseError from "../../dataAccess/DatabaseError";
+import UserDb from "../../dataAccess/UserDb";
 import Clock from "../../domain/Clock";
 import ValidationError from "../../domain/ValidationError";
 import FakeClock from "../../fakes/FakeClock";
@@ -80,16 +81,22 @@ test("return value", async () => {
   expect(res.userId).toEqual(new NumberId(2));
 });
 
-test("unexpected database error", async () => {
+describe("db errors", () => {
   const throwDbError = () => {
     throw new DatabaseError("db error");
   };
-  userDb.save = userDb.getById = userDb.getByEmail = throwDbError;
-  try {
-    await new AddUser(userData).execute();
-    fail("should have failed");
-  } catch (e) {
-    expect(e instanceof ServerError).toBe(true);
-    expect(e.message).toBe("server error");
-  }
+
+  const expectToThrowServerError = () =>
+    expect(() => new AddUser(userData).execute()).rejects.toThrowError(
+      ServerError
+    );
+
+  test("save", async () => {
+    userDb.save = throwDbError;
+    await expectToThrowServerError();
+  });
+  test("getByEmail", async () => {
+    userDb.getByEmail = throwDbError;
+    await expectToThrowServerError();
+  });
 });
