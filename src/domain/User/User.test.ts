@@ -1,4 +1,5 @@
 import User from ".";
+import { FakeClock } from "../../fakes";
 import NumberId from "../../fakes/NumberId";
 import Clock from "../Clock";
 import ValidationError from "../ValidationError";
@@ -12,12 +13,7 @@ const validData = {
 };
 
 beforeAll(() => {
-  const fakeClock: Clock = {
-    now() {
-      return new Date("2020-03-12");
-    },
-  };
-  Clock.inst = fakeClock;
+  Clock.inst = new FakeClock({ currentTime: new Date("2020-03-12") });
 });
 function givenUserDataExpectErrorMsgToBe(
   userData: Partial<typeof validData>,

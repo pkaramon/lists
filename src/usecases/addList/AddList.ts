@@ -3,7 +3,6 @@ import List from "../../domain/List";
 import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import UserDb from "../../dataAccess/UserDb";
-import DatabaseError from "../../dataAccess/DatabaseError";
 import NotFoundError from "../../dataAccess/NotFoundError";
 import InvalidListDataError from "./InvalidListDataError";
 import UserNotFoundError from "./UserNotFoundError";

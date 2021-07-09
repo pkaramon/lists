@@ -36,9 +36,7 @@ export default function buildChangeListItemTitle({
         return await listDb.getById(this.data.listId);
       } catch (e) {
         if (e instanceof NotFoundError) throw new ListNotFoundError();
-        else if (e instanceof DatabaseError)
-          throw new ServerError("could not get the list");
-        else throw e;
+        else throw new ServerError("could not get the list");
       }
     }
 

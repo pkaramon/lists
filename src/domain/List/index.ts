@@ -1,9 +1,11 @@
 import Id from "../Id";
 import ListItem from "../ListItem";
 import ValidationError from "../ValidationError";
+import ListItemsContainer from "./ListItemsContainer";
 
 export default class List {
-  private _listItems: ListItem[] = [];
+  private listItems = new ListItemsContainer();
+
   constructor(
     private data: { id: Id; authorId: Id; title: string; description: string }
   ) {
@@ -28,34 +30,27 @@ export default class List {
   }
 
   get length() {
-    return this._listItems.length;
+    return this.listItems.length;
   }
 
   [Symbol.iterator]() {
-    return this._listItems[Symbol.iterator]();
+    return this.listItems[Symbol.iterator]();
   }
 
-  isUserAllowed(userId: Id){
-    return this.authorId.equals(userId)
+  isUserAllowed(userId: Id) {
+    return this.authorId.equals(userId);
   }
 
-  addListItem(listItem: ListItem) {
-    this._listItems.push(listItem);
+  addListItem(li: ListItem) {
+    this.listItems.add(li);
   }
 
   removeListItemAt(index: number) {
-    this.validateIndex(index);
-    this._listItems.splice(index, 1);
+    this.listItems.removeAt(index);
   }
 
   getListItemAt(index: number) {
-    this.validateIndex(index);
-    return this._listItems[index];
-  }
-
-  private validateIndex(index: number) {
-    if (index < 0 || index >= this.length || !Number.isInteger(index))
-      throw new RangeError(`invalid index: ${index}`);
+    return this.listItems.getAt(index);
   }
 
   private cleanData() {
@@ -67,4 +62,3 @@ export default class List {
     if (this.data.title.length === 0) throw new ValidationError("empty title");
   }
 }
-
