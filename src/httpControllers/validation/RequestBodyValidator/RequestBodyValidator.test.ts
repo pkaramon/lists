@@ -6,9 +6,9 @@ import {
   expectErrorMessageToBe,
   expectStatusCodeToBe,
 } from "../../__test__/fixtures";
-import { InvalidDataError } from "../ObjectValidator";
 import ObjectValidatorYup from "../ObjectValidatorYup";
 import buildRequestBodyValidator from "./RequestBodyValidator";
+
 
 const RequestBodyValidator = buildRequestBodyValidator(ObjectValidatorYup);
 

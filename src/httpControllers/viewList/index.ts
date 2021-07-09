@@ -19,9 +19,7 @@ type ControllerRequest = AuthHttpRequest<
 >;
 
 export default class ViewListController {
-  static requestBodyShape = {
-    listId: String,
-  };
+  static requestBodyShape = { listId: String };
 
   constructor(
     private ViewList: ViewListUseCase,

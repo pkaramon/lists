@@ -21,7 +21,7 @@ export default function buildLogin({
     async execute() {
       const user = await this.getUser();
       if (await this.doPasswordsMatch(user)) {
-        return { userToken: await tokenCreator.create(user.id) };
+        return { token: await tokenCreator.create(user.id) };
       } else {
         this.throwInavlidDataError();
       }
@@ -29,8 +29,7 @@ export default function buildLogin({
 
     private async getUser() {
       try {
-        const user = await userDb.getByEmail(this.data.email);
-        return user;
+        return await userDb.getByEmail(this.data.email);
       } catch (e) {
         this.handleError(e);
       }

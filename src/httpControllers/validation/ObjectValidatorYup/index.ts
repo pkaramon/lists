@@ -2,27 +2,25 @@ import ObjectValidator, {
   InvalidDataError,
   InvalidDataFormatError,
 } from "../ObjectValidator";
-import Shape from "../Shape";
+import Shape, { ShapeType } from "../Shape";
 import * as yup from "yup";
 import FromShape from "../FromShape";
 
-export default class ObjectValidatorYup<ShapeType extends Shape>
-  implements ObjectValidator<ShapeType>
+export default class ObjectValidatorYup<S extends Shape>
+  implements ObjectValidator<S>
 {
-  constructor(private shape: ShapeType) {}
+  private yupSchema: yup.ObjectSchema<any>;
+
+  constructor(shape: S) {
+    this.yupSchema = this.createYupSchema(shape);
+  }
 
   async validate(data: any) {
-    if (!this.isDataInCorrectFormat(data)) {
-      throw new InvalidDataFormatError();
-    }
-
-    const yupSchema = this.createYupSchema(this.shape);
+    if (!this.isDataInCorrectFormat(data)) throw new InvalidDataFormatError();
     try {
-      const result = await yupSchema.validate(data, { abortEarly: false });
-      return result as FromShape<ShapeType>;
+      return await this.getResult(data);
     } catch (e) {
-      const error = e as yup.ValidationError;
-      throw new InvalidDataError(error.inner.map((e) => e.path!));
+      this.handleYupValidationError(e);
     }
   }
 
@@ -30,28 +28,37 @@ export default class ObjectValidatorYup<ShapeType extends Shape>
     return typeof data === "object" && data.constructor === Object;
   }
 
+  private async getResult(data: any) {
+    const result = await this.yupSchema.validate(data, { abortEarly: false });
+    return result as FromShape<S>;
+  }
+
+  private handleYupValidationError(e: any): never {
+    const error = e as yup.ValidationError;
+    throw new InvalidDataError(error.inner.map((e) => e.path!));
+  }
+
   private createYupSchema(shape: Shape) {
     const yupShape: any = {};
     for (const key in shape) {
       const type = shape[key];
-      switch (type) {
-        case String:
-          yupShape[key] = yup.string().strict().required();
-          break;
-        case Number:
-          yupShape[key] = yup.number().strict().required();
-          break;
-        case Boolean:
-          yupShape[key] = yup.boolean().strict().required();
-          break;
-        case Date:
-          yupShape[key] = yup.date().required();
-          break;
-        default:
-          yupShape[key] = this.createYupSchema(shape[key] as Shape);
-          break;
-      }
+      yupShape[key] = this.dispatchTypeToYupSchema(type);
     }
     return yup.object().shape(yupShape);
+  }
+
+  private dispatchTypeToYupSchema(type: Shape | ShapeType) {
+    switch (type) {
+      case String:
+        return yup.string().strict().required();
+      case Number:
+        return yup.number().strict().required();
+      case Boolean:
+        return yup.boolean().strict().required();
+      case Date:
+        return yup.date().required();
+      default:
+        return this.createYupSchema(type as Shape);
+    }
   }
 }

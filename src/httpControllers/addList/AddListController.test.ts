@@ -1,45 +1,25 @@
 import Clock from "../../domain/Clock";
-import User from "../../domain/User";
-import {
-  FakeClock,
-  NumberId,
-  UserDbMemory,
-  ListDbMemory,
-  NumberIdCreator,
-} from "../../fakes";
-import buildAddList from "../../usecases/addList/AddList";
+import { FakeClock, NumberId } from "../../fakes";
 import StatusCode from "../StatusCode";
 import {
   expectStatusCodeToBe,
   expectErrorMessageToBe,
   expectDataToMatch,
+  MockUseCase,
 } from "../__test__/fixtures";
 import AddListController from ".";
+import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
+import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let addListCtrl: AddListController;
-let AddList: ReturnType<typeof buildAddList>;
 const userId = new NumberId(1);
 beforeEach(async () => {
-  const userDb = new UserDbMemory();
-  await userDb.save(
-    new User({
-      id: userId,
-      name: "abc",
-      email: "bob@mail.com",
-      password: "pass123321",
-      birthDate: new Date("2000-01-01"),
-    })
-  );
-  AddList = buildAddList({
-    userDb,
-    listDb: new ListDbMemory(),
-    idCreator: new NumberIdCreator(),
-  });
-  addListCtrl = new AddListController(AddList);
+  addListCtrl = new AddListController(MockUseCase);
 });
 
 test("invalid list data", async () => {
+  MockUseCase.mockError(new InvalidListDataError());
   const res = await addListCtrl.handle({
     body: { title: "", description: "" },
     auth: { userId },
@@ -49,6 +29,7 @@ test("invalid list data", async () => {
 });
 
 test("user does not exist", async () => {
+  MockUseCase.mockError(new UserNotFoundError());
   const res = await addListCtrl.handle({
     body: { title: "", description: "" },
     auth: { userId: new NumberId(100) },
@@ -58,6 +39,7 @@ test("user does not exist", async () => {
 });
 
 test("list data is valid and user exists and it authenticated", async () => {
+  MockUseCase.mockResult({ listId: new NumberId(1) });
   const res = await addListCtrl.handle({
     body: { title: "abc", description: "" },
     auth: { userId },

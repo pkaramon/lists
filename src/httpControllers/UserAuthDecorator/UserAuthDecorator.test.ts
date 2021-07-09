@@ -4,7 +4,6 @@ import { FakeTokenValidator } from "../../fakes";
 import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import ErrorResponse from "../ErrorResponse";
-import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import {
   expectDataToMatch,

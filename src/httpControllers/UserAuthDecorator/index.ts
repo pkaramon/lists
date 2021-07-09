@@ -22,12 +22,12 @@ export default function buildUserAuthDecorator(tokenValidator: TokenValidator) {
           req.auth = {};
           req.auth.userId = await tokenValidator.validate(token);
         } catch (e) {
-          return this.getUnauthorizedResonse();
+          return this.getUnauthorizedResponse();
         }
         return super.handle(req);
       }
 
-      private getUnauthorizedResonse() {
+      private getUnauthorizedResponse() {
         return new ErrorResponse(
           StatusCode.Unauthorized,
           "user token is invalid"

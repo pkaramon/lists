@@ -12,8 +12,10 @@ import {
   expectDataToMatch,
   expectErrorMessageToBe,
   expectStatusCodeToBe,
+  MockUseCase,
 } from "../__test__/fixtures";
 import LoginController from ".";
+import InvalidLoginDataError from "../../usecases/login/InvalidLoginDataError";
 
 let userDb: UserDb;
 let loginController: LoginController;
@@ -30,27 +32,26 @@ beforeEach(async () => {
       birthDate: new Date("2003-03-12"),
     })
   );
-  loginController = new LoginController(
-    buildLogin({ userDb, hasher, tokenCreator: new FakeTokenCreator() })
-  );
+  loginController = new LoginController(MockUseCase);
 });
 
 test("invalid email or password", async () => {
-  for (const body of [
-    { email: "unknown@mail.com", password: "wrong" },
-    { email: "unknown@mail.com", password: "password123" },
-    { email: "bob@mail.com", password: "wrong" },
-  ]) {
-    const response = await loginController.handle({ body });
-    expectStatusCodeToBe(response, StatusCode.BadRequest);
-    expectErrorMessageToBe(response, "email or password is invalid");
-  }
+  MockUseCase.mockError(new InvalidLoginDataError());
+  const response = await loginController.handle({
+    body: { email: "bob@mail.com", password: "pass123" },
+  });
+  expectStatusCodeToBe(response, StatusCode.BadRequest);
+  expectErrorMessageToBe(response, "email or password is invalid");
 });
 
 test("valid email and password", async () => {
-  const response = await loginController.handle({
-    body: { email: "bob@mail.com", password: "password123" },
-  });
+  MockUseCase.mockResult({ token: "###1###" });
+
+  const body = { email: "bob@mail.com", password: "password123" };
+  const response = await loginController.handle({ body });
+
+  MockUseCase.expectPassedDataToMatch(body);
+
   expectStatusCodeToBe(response, StatusCode.Ok);
   expectDataToMatch(response, { token: "###1###" });
 });

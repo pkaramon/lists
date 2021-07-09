@@ -111,6 +111,3 @@ test("strict", async () => {
   expect(await schema.isValid({ name: 42, age: 42 })).toBe(false);
   expect(await schema.isValid({ name: "bob", age: "42" })).toBe(false);
 });
-
-test('dates', ()=> {
-})

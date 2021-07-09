@@ -32,6 +32,7 @@ export default class ChangeListItemTitleController {
     private ChangeListItemTitle: ChangeListItemTitle,
     private idConverter: IdConverter
   ) {}
+
   async handle(req: ControllerRequest) {
     try {
       await this.tryToChangeListItemTitle(req);

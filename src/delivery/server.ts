@@ -13,7 +13,7 @@ import {
 const app = express();
 
 interface Controller {
-  handle(req: HttpRequest<any>): Promise<any>;
+  handle(req: Request<any>): Promise<any>;
 }
 
 function httpControllerToExpress(ctrl: Controller) {

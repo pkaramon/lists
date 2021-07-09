@@ -25,20 +25,18 @@ export default function buildRequestBodyValidator(
     target: Class
   ) {
     return class extends target {
-      private requestBodyValidator = new ObjectVaildator(
-        target.requestBodyShape
-      );
+      private objectValidator = new ObjectVaildator(target.requestBodyShape);
 
       async handle(req: HttpRequest<any>) {
         try {
-          req.body = await this.requestBodyValidator.validate(req.body);
+          req.body = await this.objectValidator.validate(req.body);
         } catch (e) {
-          return this.handleRequestBodyValidatorErrors(e);
+          return this.handleObjectValidatorError(e);
         }
         return super.handle(req);
       }
 
-      private handleRequestBodyValidatorErrors(error: any) {
+      private handleObjectValidatorError(error: any) {
         if (error instanceof InvalidDataFormatError) {
           return new ErrorResponse(
             StatusCode.BadRequest,

@@ -8,7 +8,7 @@ import FromShape from "../validation/FromShape";
 
 type LoginUseCase = UseCaseClass<
   { email: string; password: string },
-  { userToken: string }
+  { token: string }
 >;
 
 type ControllerRequest = HttpRequest<
@@ -24,20 +24,30 @@ export default class LoginController {
   constructor(private Login: LoginUseCase) {}
 
   async handle(req: ControllerRequest) {
-    const { email, password } = req.body;
     try {
-      const { userToken } = await new this.Login({
-        email,
-        password,
-      }).execute();
-      return new DataResponse(StatusCode.Ok, { token: userToken });
+      const token = await this.tryToLogUserIn(req);
+      return this.generateOkResponse(token);
     } catch (e) {
-      if (e instanceof InvalidLoginDataError)
-        return new ErrorResponse(
-          StatusCode.BadRequest,
-          "email or password is invalid"
-        );
-      else throw e;
+      return this.handleErrors(e);
     }
+  }
+
+  private async tryToLogUserIn(req: ControllerRequest) {
+    const { email, password } = req.body;
+    const { token } = await new this.Login({ email, password }).execute();
+    return token;
+  }
+
+  private generateOkResponse(token: string) {
+    return new DataResponse(StatusCode.Ok, { token });
+  }
+
+  private handleErrors(error: any) {
+    if (error instanceof InvalidLoginDataError)
+      return new ErrorResponse(
+        StatusCode.BadRequest,
+        "email or password is invalid"
+      );
+    else throw error;
   }
 }

@@ -30,28 +30,29 @@ beforeEach(async () => {
   );
 });
 
+function expectLoginToThrow(
+  data: { email: string; password: string },
+  error: any
+) {
+  return expect(() => new Login(data).execute()).rejects.toThrow(error);
+}
+
 test("user with email does not exist", async () => {
-  await expect(
-    async () =>
-      await new Login({
-        email: "doesnotexist@mail.com",
-        password: "password123",
-      }).execute()
-  ).rejects.toThrow(InvalidLoginDataError);
+  await expectLoginToThrow(
+    { email: "doesnotexist@mail.com", password: "password123" },
+    InvalidLoginDataError
+  );
 });
 
 test("user with email exist but password does not match", async () => {
-  await expect(
-    async () =>
-      await new Login({
-        email: "bob@mail.com",
-        password: "wrongpassword",
-      }).execute()
-  ).rejects.toThrow(InvalidLoginDataError);
+  await expectLoginToThrow(
+    { email: "bob@mail.com", password: "wrongpassword" },
+    InvalidLoginDataError
+  );
 });
 
 test("user with email exist and password is correct", async () => {
-  const { userToken } = await new Login({
+  const { token: userToken } = await new Login({
     email: "bob@mail.com",
     password: "bobpass123",
   }).execute();
@@ -63,11 +64,8 @@ test("unexpected database error", async () => {
     throw new DatabaseError("database error");
   };
 
-  const fn = () =>
-    new Login({
-      email: "bob@mail.com",
-      password: "bobpass123",
-    }).execute();
-
-  await expect(fn).rejects.toThrowError(ServerError);
+  await expectLoginToThrow(
+    { email: "bob@mail.com", password: "bobpass123" },
+    ServerError
+  );
 });

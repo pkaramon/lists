@@ -34,14 +34,7 @@ export default class AddUserController {
         userId: userId.toPrimitive(),
       });
     } catch (e) {
-      if (e instanceof EmailAlreadyTakenError)
-        return new ErrorResponse(
-          StatusCode.BadRequest,
-          "email is already taken"
-        );
-      if (e instanceof InvalidUserDataError)
-        return new ErrorResponse(StatusCode.BadRequest, e.message);
-      else throw e;
+      return this.handleErrors(e);
     }
   }
 
@@ -52,5 +45,19 @@ export default class AddUserController {
       email: body.email,
       birthDate: body.birthDate,
     }).execute();
+  }
+
+  private handleErrors(e: any) {
+    switch (e.constructor) {
+      case EmailAlreadyTakenError:
+        return new ErrorResponse(
+          StatusCode.BadRequest,
+          "email is already taken"
+        );
+      case InvalidUserDataError:
+        return new ErrorResponse(StatusCode.BadRequest, e.message);
+      default:
+        throw e;
+    }
   }
 }
