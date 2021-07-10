@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import HttpRequest from "../httpControllers/HttpRequest";
+import express from "express";
+import HttpController from "../httpControllers/HttpController";
 import {
   setupAddListController,
   setupAddListItemController,
@@ -12,12 +12,8 @@ import {
 
 const app = express();
 
-interface Controller {
-  handle(req: Request<any>): Promise<any>;
-}
-
-function httpControllerToExpress(ctrl: Controller) {
-  return (req: Request, res: Response) => {
+function httpControllerToExpress(ctrl: HttpController) {
+  return (req: express.Request, res: express.Response) => {
     ctrl
       .handle({ body: req.body, headers: req.headers })
       .then((result) => {

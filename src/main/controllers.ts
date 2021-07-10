@@ -1,4 +1,3 @@
-import Clock from "../domain/Clock";
 import ListItemGatewayImp from "../domain/ListItemGateway/ListItemGatewayImp";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
@@ -25,12 +24,6 @@ import buildDeleteListItem from "../usecases/deleteListItem/DeleteListItem";
 import buildLogin from "../usecases/login/Login";
 import buildViewList from "../usecases/viewList/ViewList";
 
-Clock.inst = {
-  now() {
-    return new Date();
-  },
-};
-
 const privateKey = "eed17796-e36d-439b-92b2-da2426d87869";
 const hasher = new BcryptHasher(5);
 const userIdCreator = new UUIDCreator();
@@ -51,7 +44,7 @@ const listDb = new MongoListDb(
   {
     uri: "mongodb://localhost:27017",
     databaseName: "lists",
-    collectionName: "users",
+    collectionName: "lists",
   },
   {
     listItemGateway,

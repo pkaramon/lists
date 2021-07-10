@@ -1,16 +1,13 @@
 import DataResponse from "../../DataResponse";
 import ErrorResponse from "../../ErrorResponse";
+import HttpController from "../../HttpController";
 import HttpRequest from "../../HttpRequest";
 import StatusCode from "../../StatusCode";
 import ObjectValidator, { InvalidDataFormatError } from "../ObjectValidator";
 import Shape from "../Shape";
 
-interface Controller {
-  handle(req: HttpRequest<{}>): Promise<any>;
-}
-
 interface ControllerClass {
-  new (...args: any[]): Controller;
+  new (...args: any[]): HttpController;
   requestBodyShape: Shape;
 }
 
