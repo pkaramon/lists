@@ -39,16 +39,13 @@ export default function buildViewList({
     }
 
     private checkIfUserHasAccess(list: List) {
-      if (!list.isUserAllowed(this.data.userId)) {
-        throw new UserNoAccessError();
-      }
+      if (!list.isUserAllowed(this.data.userId)) throw new UserNoAccessError();
     }
 
     private getListItemsData(list: List) {
       const listItemsData = [];
-      for (const listItem of list) {
+      for (const listItem of list)
         listItemsData.push(listItemGateway.fromObjectToData(listItem));
-      }
       return listItemsData;
     }
   };

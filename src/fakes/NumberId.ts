@@ -7,7 +7,7 @@ export default class NumberId implements Id {
     return other instanceof NumberId && other.n === this.n;
   }
 
-  toPrimitive() {
-    return this.n;
+  toString() {
+    return String(this.n);
   }
 }

@@ -9,7 +9,7 @@ test("uuid", () => {
   expect(id.equals(new UUID(uuid))).toBe(true);
   expect(id.equals(new UUID(uuid.replace("0", "1")))).toBe(false);
   expect(id.equals(new NumberId(1))).toBe(false);
-  expect(id.toPrimitive()).toBe(uuid);
+  expect(id.toString()).toBe(uuid);
 });
 
 test("idConverter", () => {

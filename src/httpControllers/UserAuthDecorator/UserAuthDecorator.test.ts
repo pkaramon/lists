@@ -20,7 +20,7 @@ class Controller {
     const userId = req.auth.userId as Id;
     return new DataResponse(StatusCode.Ok, {
       result: req.body.n ** 2,
-      userId: userId.toPrimitive(),
+      userId: userId.toString(),
     });
   }
 }
@@ -48,5 +48,5 @@ test("token is valid", async () => {
   const req = { body: { n: 3 }, headers: { authorization: "###1###" } } as any;
   const response = await ctrl.handle(req);
   expectStatusCodeToBe(response, StatusCode.Ok);
-  expectDataToMatch(response, { result: 9, userId: 1 });
+  expectDataToMatch(response, { result: 9, userId: "1" });
 });

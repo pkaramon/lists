@@ -3,6 +3,6 @@ import Id from "../domain/Id";
 
 export default class FakeTokenCreator implements TokenCreator {
   async create(userId: Id): Promise<string> {
-    return `###${userId.toPrimitive()}###`;
+    return `###${userId.toString()}###`;
   }
 }

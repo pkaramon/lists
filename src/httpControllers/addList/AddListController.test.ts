@@ -45,5 +45,5 @@ test("list data is valid and user exists and it authenticated", async () => {
     auth: { userId },
   });
   expectStatusCodeToBe(res, StatusCode.Created);
-  expectDataToMatch(res, { listId: 1 });
+  expectDataToMatch(res, { listId: "1" });
 });

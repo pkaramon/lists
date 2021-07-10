@@ -6,7 +6,7 @@ export default class JWTokenCreator implements TokenCreator {
   constructor(private privateKey: string) {}
 
   async create(userId: Id): Promise<string> {
-    const id = userId.toPrimitive().toString();
+    const id = userId.toString();
     return jwt.sign({ userId: id }, this.privateKey);
   }
 }

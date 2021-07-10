@@ -31,7 +31,7 @@ export default class AddUserController {
     try {
       const { userId } = await this.getResultFromAddUser(req.body);
       return new DataResponse(StatusCode.Created, {
-        userId: userId.toPrimitive(),
+        userId: userId.toString(),
       });
     } catch (e) {
       return this.handleErrors(e);

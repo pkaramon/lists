@@ -31,7 +31,7 @@ export default class MongoUserDb extends MongoDb<UserData> implements UserDb {
 
   @mongoDbErrorsGuard
   async getById(id: Id): Promise<User> {
-    return await this.findUser({ _id: id.toPrimitive().toString() });
+    return await this.findUser({ _id: id.toString() });
   }
 
   @mongoDbErrorsGuard
@@ -64,7 +64,7 @@ export default class MongoUserDb extends MongoDb<UserData> implements UserDb {
 
   private createUserDataFromUser(u: User): UserData {
     return {
-      _id: u.id.toPrimitive().toString(),
+      _id: u.id.toString(),
       name: u.name,
       password: u.password,
       email: u.email,
@@ -73,6 +73,6 @@ export default class MongoUserDb extends MongoDb<UserData> implements UserDb {
   }
 
   private idToString(id: Id) {
-    return id.toPrimitive().toString();
+    return id.toString();
   }
 }

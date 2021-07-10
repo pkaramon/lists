@@ -4,13 +4,13 @@ import ListDb from "../dataAccess/ListDb";
 import NotFoundError from "../dataAccess/NotFoundError";
 
 export default class ListDbMemory implements ListDb {
-  lists = new Map<string | number, List>();
+  lists = new Map<string, List>();
 
   async save(list: List): Promise<void> {
-    this.lists.set(list.id.toPrimitive(), list);
+    this.lists.set(list.id.toString(), list);
   }
   async getById(id: Id): Promise<List> {
-    const list = this.lists.get(id.toPrimitive());
+    const list = this.lists.get(id.toString());
     if (list === undefined)
       throw new NotFoundError("list with that id does not exist");
     return list;

@@ -4,15 +4,15 @@ import Id from "../domain/Id";
 import User from "../domain/User";
 
 export default class UserDbMemory implements UserDb {
-  private users = new Map<string | number, User>();
+  private users = new Map<string, User>();
 
   async save(u: User) {
-    this.users.set(u.id.toPrimitive(), u);
+    this.users.set(u.id.toString(), u);
   }
 
   async getById(id: Id) {
     this.checkForExistance(id);
-    return this.users.get(id.toPrimitive())!;
+    return this.users.get(id.toString())!;
   }
 
   async getByEmail(email: string) {
@@ -23,11 +23,11 @@ export default class UserDbMemory implements UserDb {
 
   async deleteById(id: Id): Promise<void> {
     this.checkForExistance(id);
-    this.users.delete(id.toPrimitive());
+    this.users.delete(id.toString());
   }
 
   private checkForExistance(id: Id) {
-    const user = this.users.get(id.toPrimitive());
+    const user = this.users.get(id.toString());
     if (user === undefined) throw new NotFoundError("user does not exist");
   }
 }

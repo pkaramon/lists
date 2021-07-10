@@ -5,7 +5,8 @@ export default class UUID implements Id {
   equals(other: Id): boolean {
     return other instanceof UUID && other.id === this.id;
   }
-  toPrimitive(): string | number {
+
+  toString() {
     return this.id;
   }
 }

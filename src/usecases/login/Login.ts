@@ -23,7 +23,7 @@ export default function buildLogin({
       if (await this.doPasswordsMatch(user)) {
         return { token: await tokenCreator.create(user.id) };
       } else {
-        this.throwInavlidDataError();
+        throw new InvalidLoginDataError();
       }
     }
 
@@ -40,12 +40,8 @@ export default function buildLogin({
     }
 
     private handleError(e: Error): never {
-      if (e instanceof NotFoundError) this.throwInavlidDataError();
+      if (e instanceof NotFoundError) throw new InvalidLoginDataError();
       else throw new ServerError();
-    }
-
-    private throwInavlidDataError(): never {
-      throw new InvalidLoginDataError();
     }
   };
 }

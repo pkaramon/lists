@@ -37,7 +37,7 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
 
   @mongoDbErrorsGuard
   async getById(id: Id): Promise<List> {
-    const listData = await this.findOne({ _id: id.toPrimitive().toString() });
+    const listData = await this.findOne({ _id: id.toString() });
     return this.fromListDataToList(listData);
   }
 
@@ -51,8 +51,8 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
 
   private fromListToListData(list: List) {
     return {
-      _id: list.id.toPrimitive().toString(),
-      authorId: list.authorId.toPrimitive().toString(),
+      _id: list.id.toString(),
+      authorId: list.authorId.toString(),
       description: list.description,
       title: list.title,
       listItems: this.getListItemsData(list),

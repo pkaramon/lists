@@ -29,7 +29,7 @@ export default class AddListController {
     try {
       const { listId } = await this.tryToAddList(req);
       return new DataResponse(StatusCode.Created, {
-        listId: listId.toPrimitive(),
+        listId: listId.toString(),
       });
     } catch (e) {
       return this.handleErrors(e);

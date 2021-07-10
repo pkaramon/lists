@@ -39,7 +39,7 @@ test("successfully creating a user", async () => {
     body: requestBody,
   });
   expectStatusCodeToBe(response, StatusCode.Created);
-  expectDataToMatch(response, { userId: 123 });
+  expectDataToMatch(response, { userId: "123" });
 });
 
 test("invalid user data", async () => {
