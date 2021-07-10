@@ -39,7 +39,7 @@ export default function buildLogin({
       return await hasher.compare(this.data.password, user.password);
     }
 
-    private handleError(e: Error): never {
+    private handleError(e: any): never {
       if (e instanceof NotFoundError) throw new InvalidLoginDataError();
       else throw new ServerError();
     }
