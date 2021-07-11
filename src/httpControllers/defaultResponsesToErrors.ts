@@ -38,5 +38,5 @@ DefaultResponsesToErrors.add(
 
 DefaultResponsesToErrors.add(
   ServerError,
-  new ErrorResponse(500, "server error")
+  new ErrorResponse(StatusCode.InternalServerError, "server error")
 );
