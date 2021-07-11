@@ -61,6 +61,16 @@ test("saving and retriving list with items", async () => {
   expect(third.description).toBe("desc");
 });
 
+test("saving, making changes and saving again", async () => {
+  await db.save(new List(listData));
+  let list = await db.getById(listData.id);
+  expect(list.length).toBe(0);
+  list.addListItem(new TextListItem("title"));
+  await db.save(list);
+  list = await db.getById(listData.id);
+  expect(list.length).toBe(1);
+});
+
 test("getById - list does not exist", () => {
   expect(() => db.getById(listData.id)).rejects.toThrowError(NotFoundError);
 });

@@ -1,8 +1,6 @@
 import DatabaseError from "../../dataAccess/DatabaseError";
 import NotFoundError from "../../dataAccess/NotFoundError";
-import Clock from "../../domain/Clock";
 import User from "../../domain/User";
-import { FakeClock } from "../../fakes";
 import UUID from "../UUID/UUID";
 import UUIDConverter from "../UUID/UUIDConverter";
 import UUIDCreator from "../UUID/UUIDCreator";
@@ -17,7 +15,6 @@ const db = new MongoUserDb(
   { idConverter: new UUIDConverter() }
 );
 
-Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 const idCreator = new UUIDCreator();
 afterEach(async () => {
   await db.TESTS_ONLY_clear();
@@ -43,6 +40,16 @@ test("saving and retrieving", async () => {
   await db.save(new User(userData));
   const user = await db.getById(userData.id);
   checkUser(user);
+});
+
+test("saving modifying and saving again", async () => {
+  await db.save(new User(userData));
+  let user = await db.getById(userData.id);
+  user["data"]["email"] = "newmail@mail.com";
+  await db.save(user);
+
+  user = await db.getById(userData.id);
+  expect(user.email).toBe("newmail@mail.com");
 });
 
 test("getById - user does not exist", async () => {

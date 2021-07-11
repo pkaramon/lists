@@ -26,7 +26,11 @@ export default class MongoUserDb extends MongoDb<UserData> implements UserDb {
   async save(u: User): Promise<void> {
     const collection = await this.getCollection();
     const data = this.createUserDataFromUser(u);
-    await collection.insertOne(data, { forceServerObjectId: true });
+    await collection.updateOne(
+      { _id: u.id.toString() },
+      { $set: data },
+      { upsert: true }
+    );
   }
 
   @mongoDbErrorsGuard
