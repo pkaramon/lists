@@ -1,9 +1,8 @@
 import IdConverter from "../../dataAccess/IdConverter";
 import Id from "../../domain/Id";
 import InvalidListItemIndexError from "../../usecases/InvalidListItemIndexError";
-import ListNotFoundError from "../../usecases/ListNotFoundError";
-import UserNoAccessError from "../../usecases/UserNoAccessError";
 import DataResponse from "../DataResponse";
+import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import AuthHttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
@@ -38,7 +37,12 @@ export default class ChangeListItemTitleController {
       await this.tryToChangeListItemTitle(req);
       return this.generateSuccessfulResponse();
     } catch (e) {
-      return this.handleErrors(e, req);
+      if (e instanceof InvalidListItemIndexError)
+        return new ErrorResponse(
+          StatusCode.BadRequest,
+          `invalid list item index: ${req.body.listItemIndex}`
+        );
+      return errorToResponse(e);
     }
   }
 
@@ -56,24 +60,5 @@ export default class ChangeListItemTitleController {
     return new DataResponse(StatusCode.Ok, {
       message: "successfully changed the title",
     });
-  }
-
-  private handleErrors(error: any, req: ControllerRequest) {
-    switch (error.constructor) {
-      case ListNotFoundError:
-        return new ErrorResponse(StatusCode.NotFound, "list not found");
-      case InvalidListItemIndexError:
-        return new ErrorResponse(
-          StatusCode.BadRequest,
-          `invalid list item index: ${req.body.listItemIndex}`
-        );
-      case UserNoAccessError:
-        return new ErrorResponse(
-          StatusCode.Unauthorized,
-          `you do not have access to this list`
-        );
-      default:
-        throw error;
-    }
   }
 }

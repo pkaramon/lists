@@ -2,6 +2,7 @@ import Id from "../../domain/Id";
 import EmailAlreadyTakenError from "../../usecases/addUser/EmailAlreadyTakenError";
 import InvalidUserDataError from "../../usecases/addUser/InvalidUserDataError";
 import DataResponse from "../DataResponse";
+import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
@@ -57,7 +58,7 @@ export default class AddUserController {
       case InvalidUserDataError:
         return new ErrorResponse(StatusCode.BadRequest, e.message);
       default:
-        throw e;
+        return errorToResponse(e);
     }
   }
 }

@@ -1,13 +1,15 @@
 import DataResponse from "../../DataResponse";
 import ErrorResponse from "../../ErrorResponse";
-import HttpController from "../../HttpController";
+import { HttpControllerConstructor } from "../../HttpController";
 import HttpRequest from "../../HttpRequest";
 import StatusCode from "../../StatusCode";
-import ObjectValidator, { InvalidDataFormatError } from "../ObjectValidator";
+import ObjectValidator, {
+  InvalidDataError,
+  InvalidDataFormatError,
+} from "../ObjectValidator";
 import Shape from "../Shape";
 
-interface ControllerClass {
-  new (...args: any[]): HttpController;
+interface ControllerClass extends HttpControllerConstructor {
   requestBodyShape: Shape;
 }
 
@@ -34,17 +36,20 @@ export default function buildRequestBodyValidator(
       }
 
       private handleObjectValidatorError(error: any) {
-        if (error instanceof InvalidDataFormatError) {
-          return new ErrorResponse(
-            StatusCode.BadRequest,
-            "invalid data format"
-          );
-        } else {
-          return new DataResponse(StatusCode.BadRequest, {
-            error: "invalid data",
-            invalidKeys: error.invalidKeys,
-          });
-        }
+        if (error instanceof InvalidDataFormatError)
+          return this.generateResponseForDataInvalidFormat();
+        else return this.generateResonseForInvalidData(error);
+      }
+
+      private generateResponseForDataInvalidFormat() {
+        return new ErrorResponse(StatusCode.BadRequest, "invalid data format");
+      }
+
+      private generateResonseForInvalidData(error: InvalidDataError) {
+        return new DataResponse(StatusCode.BadRequest, {
+          error: "invalid data",
+          invalidKeys: error.invalidKeys,
+        });
       }
     };
   };

@@ -1,18 +1,11 @@
 import TokenValidator from "../../auth/TokenValidator";
 import ErrorResponse from "../ErrorResponse";
+import { HttpControllerConstructor } from "../HttpController";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 
-interface Controller {
-  handle(req: HttpRequest<any>): Promise<any>;
-}
-
-interface ControllerConstructor {
-  new (...args: any[]): Controller;
-}
-
 export default function buildUserAuthDecorator(tokenValidator: TokenValidator) {
-  return function UserAuthDecorator<Class extends ControllerConstructor>(
+  return function UserAuthDecorator<Class extends HttpControllerConstructor>(
     target: Class
   ) {
     return class extends target {

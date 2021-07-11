@@ -38,7 +38,7 @@ test("user does not have access to the list", async () => {
   MockUseCase.mockError(new UserNoAccessError());
   const res = await controller.handle(request);
   expectStatusCodeToBe(res, StatusCode.Unauthorized);
-  expectErrorMessageToBe(res, "you do not have access to this list");
+  expectErrorMessageToBe(res, "you have no access to this list");
 });
 
 test("listItemIndex is invalid", async () => {

@@ -1,5 +1,6 @@
 import InvalidLoginDataError from "../../usecases/login/InvalidLoginDataError";
 import DataResponse from "../DataResponse";
+import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
@@ -26,7 +27,7 @@ export default class LoginController {
   async handle(req: ControllerRequest) {
     try {
       const token = await this.tryToLogUserIn(req);
-      return this.generateOkResponse(token);
+      return new DataResponse(StatusCode.Ok, { token });
     } catch (e) {
       return this.handleErrors(e);
     }
@@ -38,16 +39,12 @@ export default class LoginController {
     return token;
   }
 
-  private generateOkResponse(token: string) {
-    return new DataResponse(StatusCode.Ok, { token });
-  }
-
   private handleErrors(error: any) {
     if (error instanceof InvalidLoginDataError)
       return new ErrorResponse(
         StatusCode.BadRequest,
         "email or password is invalid"
       );
-    else throw error;
+    else return errorToResponse(error);
   }
 }

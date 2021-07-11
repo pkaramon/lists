@@ -30,7 +30,7 @@ test("list exists but user does not have access to the list", async () => {
     auth: { userId: new NumberId(1) },
   });
   expectStatusCodeToBe(response, StatusCode.Unauthorized);
-  expectErrorMessageToBe(response, "you do not have access to this list");
+  expectErrorMessageToBe(response, "you have no access to this list");
 });
 
 test("list exists", async () => {

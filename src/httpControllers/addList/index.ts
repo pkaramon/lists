@@ -3,6 +3,7 @@ import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
 import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
 import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
+import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
@@ -48,16 +49,10 @@ export default class AddListController {
   private handleErrors(error: any) {
     if (error instanceof InvalidListDataError)
       return this.getListEmptyResponse();
-    else if (error instanceof UserNotFoundError)
-      return this.getUserNotExistResponse();
-    else throw error;
+    else return errorToResponse(error);
   }
 
   private getListEmptyResponse() {
     return new ErrorResponse(StatusCode.BadRequest, "list title is empty");
-  }
-
-  private getUserNotExistResponse() {
-    return new ErrorResponse(StatusCode.NotFound, "user does not exist");
   }
 }

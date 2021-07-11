@@ -5,6 +5,7 @@ import ListNotFoundError from "../../usecases/ListNotFoundError";
 import UserNoAccessError from "../../usecases/UserNoAccessError";
 import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
+import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
@@ -38,7 +39,7 @@ export default class AddListItemController {
       await this.tryToAddListItem(req);
       return this.generateSuccessfulResponse();
     } catch (e) {
-      return this.handleAddListItemErrors(e);
+      return this.handleErrors(e);
     }
   }
 
@@ -56,22 +57,9 @@ export default class AddListItemController {
     });
   }
 
-  private handleAddListItemErrors(error: any) {
-    switch (error.constructor) {
-      case ListNotFoundError:
-        return new ErrorResponse(StatusCode.NotFound, "list not found");
-      case UnknownListItemTypeError:
-        return new ErrorResponse(
-          StatusCode.BadRequest,
-          "invalid listItem type"
-        );
-      case UserNoAccessError:
-        return new ErrorResponse(
-          StatusCode.BadRequest,
-          "you have no access to this list"
-        );
-      default:
-        throw error;
-    }
+  private handleErrors(error: any) {
+    if (error instanceof UnknownListItemTypeError)
+      return new ErrorResponse(StatusCode.BadRequest, "invalid listItem type");
+    return errorToResponse(error);
   }
 }

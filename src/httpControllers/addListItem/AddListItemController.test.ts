@@ -1,5 +1,5 @@
 import AddListItemController from ".";
-import {UnknownListItemTypeError} from "../../domain/ListItemGateway";
+import { UnknownListItemTypeError } from "../../domain/ListItemGateway";
 import { NumberId } from "../../fakes";
 import NumberIdConverter from "../../fakes/NumberIdConverter";
 import ListNotFoundError from "../../usecases/ListNotFoundError";
@@ -58,7 +58,7 @@ test("listItem type is unknown", async () => {
 test("user does not have access to the list", async () => {
   MockUseCase.mockError(new UserNoAccessError());
   const res = await getResponse({ userId: 2 });
-  expectStatusCodeToBe(res, StatusCode.BadRequest);
+  expectStatusCodeToBe(res, StatusCode.Unauthorized);
   expectErrorMessageToBe(res, "you have no access to this list");
 });
 
