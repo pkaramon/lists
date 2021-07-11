@@ -10,9 +10,9 @@ import {
   FakeHasher,
   NumberId,
 } from "../../fakes";
-import buildAddUser from "../addUser/AddUser";
+import buildAddUser from "../addUser";
 import ServerError from "../ServerError";
-import buildAddList from "./AddList";
+import buildAddList from ".";
 import InvalidListDataError from "./InvalidListDataError";
 import UserNotFoundError from "./UserNotFoundError";
 

@@ -8,7 +8,7 @@ import TextListItem from "../../domain/ListItem/TextListItem";
 import { NumberId, ListDbMemory } from "../../fakes";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-import buildAddListItem from "./AddListItem";
+import buildAddListItem from ".";
 import ListNotFoundError from "../ListNotFoundError";
 import ListItemGatewayImp from "../../domain/ListItemGateway/ListItemGatewayImp";
 import { UnknownListItemTypeError } from "../../domain/ListItemGateway";

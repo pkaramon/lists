@@ -9,7 +9,7 @@ import InvalidListItemIndexError from "../InvalidListItemIndexError";
 import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-import buildDeleteListItem from "./DeleteListItem";
+import buildDeleteListItem from ".";
 
 let listDb: ListDbMemory;
 let DeleteListItem: ReturnType<typeof buildDeleteListItem>;

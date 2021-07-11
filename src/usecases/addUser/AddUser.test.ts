@@ -1,5 +1,4 @@
 import DatabaseError from "../../dataAccess/DatabaseError";
-import UserDb from "../../dataAccess/UserDb";
 import Clock from "../../domain/Clock";
 import ValidationError from "../../domain/ValidationError";
 import FakeClock from "../../fakes/FakeClock";
@@ -8,7 +7,7 @@ import NumberId from "../../fakes/NumberId";
 import NumberIdCreator from "../../fakes/NumberIdCreator";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import ServerError from "../ServerError";
-import buildAddUser from "./AddUser";
+import buildAddUser from ".";
 import EmailAlreadyTakenError from "./EmailAlreadyTakenError";
 import InvalidUserDataError from "./InvalidUserDataError";
 

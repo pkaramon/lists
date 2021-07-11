@@ -9,7 +9,7 @@ import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import ServerError from "../ServerError";
 import InvalidLoginDataError from "./InvalidLoginDataError";
-import buildLogin from "./Login";
+import buildLogin from ".";
 
 const hasher = new FakeHasher();
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });

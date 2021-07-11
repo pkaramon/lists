@@ -3,10 +3,8 @@ import Clock from "../../domain/Clock";
 import User from "../../domain/User";
 import FakeClock from "../../fakes/FakeClock";
 import FakeHasher from "../../fakes/FakeHasher";
-import FakeTokenCreator from "../../fakes/FakeTokenCreator";
 import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
-import buildLogin from "../../usecases/login/Login";
 import StatusCode from "../StatusCode";
 import {
   expectDataToMatch,

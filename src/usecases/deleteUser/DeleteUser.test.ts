@@ -6,7 +6,7 @@ import User from "../../domain/User";
 import FakeClock from "../../fakes/FakeClock";
 import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
-import buildDeleteUser from "./DeleteUser";
+import buildDeleteUser from ".";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let userDb: UserDb;

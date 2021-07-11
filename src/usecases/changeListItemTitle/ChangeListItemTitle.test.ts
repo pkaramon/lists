@@ -8,7 +8,7 @@ import NumberId from "../../fakes/NumberId";
 import ListNotFoundError from "../ListNotFoundError";
 import ServerError from "../ServerError";
 import UserNoAccessError from "../UserNoAccessError";
-import buildChangeListItemTitle from "./ChangeListItemTitle";
+import buildChangeListItemTitle from ".";
 import InvalidListItemIndexError from "../InvalidListItemIndexError";
 
 function getTestList() {
