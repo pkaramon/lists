@@ -7,6 +7,7 @@ import FakeClock from "../../fakes/FakeClock";
 import NumberId from "../../fakes/NumberId";
 import UserDbMemory from "../../fakes/UserDbMemory";
 import buildDeleteUser from ".";
+import UserNotFoundError from "../addList/UserNotFoundError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let userDb: UserDb;
@@ -27,7 +28,7 @@ beforeEach(async () => {
 
 test("user not in the database", async () => {
   const fn = () => new DeleteUser({ userId: new NumberId(100) }).execute();
-  await expect(fn).rejects.toThrow("user not found");
+  await expect(fn).rejects.toThrow(UserNotFoundError);
 });
 
 test("delete user from db", async () => {
