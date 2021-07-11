@@ -98,7 +98,7 @@ describe("listDb errors", () => {
   test("save error", async () => {
     listDb.save = errorFn;
     await expect(tryToChangeListItemTitle).rejects.toThrow(
-      "could not save changes"
+      "could not save the changes"
     );
     await expect(tryToChangeListItemTitle).rejects.toThrow(ServerError);
   });

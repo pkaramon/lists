@@ -50,7 +50,6 @@ test("list not in db", async () => {
       listId: new NumberId(100),
     }).execute();
   await expect(fn).rejects.toThrowError(ListNotFoundError);
-  await expect(fn).rejects.toThrowError("list not found");
 });
 
 test("view list", async () => {
@@ -79,6 +78,5 @@ test("listDb getById error", async () => {
       userId: new NumberId(100),
       listId: new NumberId(1),
     }).execute();
-  await expect(fn).rejects.toThrowError("could not view the list");
   await expect(fn).rejects.toThrowError(ServerError);
 });

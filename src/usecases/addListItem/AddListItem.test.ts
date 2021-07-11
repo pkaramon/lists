@@ -136,7 +136,7 @@ describe("database failures", () => {
   test("unexpected listDb.getById failure", async () => {
     listDb.getById = errorFn;
     await expect(fn).rejects.toThrow(ServerError);
-    await expect(fn).rejects.toThrow("could not get list");
+    await expect(fn).rejects.toThrow("could not get the list");
   });
 
   test("unexpected listDb.save failure", async () => {

@@ -1,11 +1,8 @@
 import ListDb from "../../dataAccess/ListDb";
-import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
 import ListItemGateway from "../../domain/ListItemGateway";
-import ListNotFoundError from "../ListNotFoundError";
-import ServerError from "../ServerError";
-import UserNoAccessError from "../UserNoAccessError";
+import ListRelatedAction from "../ListRelatedAction";
 
 export default function buildViewList({
   listDb,
@@ -14,32 +11,18 @@ export default function buildViewList({
   listDb: ListDb;
   listItemGateway: ListItemGateway;
 }) {
-  return class ViewList {
-    constructor(private data: { userId: Id; listId: Id }) {}
+  return class ViewList extends ListRelatedAction {
+    constructor(data: { userId: Id; listId: Id }) {
+      super(data.userId, data.listId, listDb);
+    }
 
-    async execute() {
-      const list = await this.getList();
-      this.checkIfUserHasAccess(list);
+    protected perform(list: List) {
       return {
         title: list.title,
         description: list.description,
         length: list.length,
         listItems: this.getListItemsData(list),
       };
-    }
-
-    private async getList() {
-      try {
-        return await listDb.getById(this.data.listId);
-      } catch (e) {
-        if (e instanceof NotFoundError)
-          throw new ListNotFoundError("list not found");
-        else throw new ServerError("could not view the list");
-      }
-    }
-
-    private checkIfUserHasAccess(list: List) {
-      if (!list.isUserAllowed(this.data.userId)) throw new UserNoAccessError();
     }
 
     private getListItemsData(list: List) {
