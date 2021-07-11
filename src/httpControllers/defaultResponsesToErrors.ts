@@ -6,12 +6,12 @@ import HttpResponse from "./HttpResponse";
 import StatusCode from "./StatusCode";
 
 export function errorToResponse(error: Error): HttpResponse {
-  return DefaultResponsesToErrors.getResponseFor(error);
+  return ErrorsToDefaultResponses.getResponseFor(error);
 }
 
 type HandlerOrResponse = ((e: Error) => HttpResponse) | HttpResponse;
 
-class DefaultResponsesToErrors {
+class ErrorsToDefaultResponses {
   static map = new Map();
 
   static add(errorConstructor: Function, handler: HandlerOrResponse) {
@@ -26,17 +26,17 @@ class DefaultResponsesToErrors {
   }
 }
 
-DefaultResponsesToErrors.add(
+ErrorsToDefaultResponses.add(
   UserNoAccessError,
   new ErrorResponse(StatusCode.Unauthorized, "you have no access to this list")
 );
 
-DefaultResponsesToErrors.add(
+ErrorsToDefaultResponses.add(
   ListNotFoundError,
   new ErrorResponse(StatusCode.NotFound, "list not found")
 );
 
-DefaultResponsesToErrors.add(
+ErrorsToDefaultResponses.add(
   ServerError,
   new ErrorResponse(StatusCode.InternalServerError, "server error")
 );
