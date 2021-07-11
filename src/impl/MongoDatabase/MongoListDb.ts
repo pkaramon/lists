@@ -41,7 +41,11 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
   @mongoDbErrorsGuard
   async save(list: List): Promise<void> {
     const collection = await this.getCollection();
-    await collection.insertOne(this.fromListToListData(list));
+    await collection.updateOne(
+      { _id: list.id.toString() },
+      { $set: this.fromListToListData(list) },
+      { upsert: true }
+    );
   }
 
   @mongoDbErrorsGuard

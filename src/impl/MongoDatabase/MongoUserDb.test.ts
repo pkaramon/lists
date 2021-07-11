@@ -45,6 +45,16 @@ test("saving and retrieving", async () => {
   checkUser(user);
 });
 
+test("saving modifying and saving again", async () => {
+  await db.save(new User(userData));
+  let user = await db.getById(userData.id);
+  user["data"]["email"] = "newmail@mail.com";
+  await db.save(user);
+
+  user = await db.getById(userData.id);
+  expect(user.email).toBe("newmail@mail.com");
+});
+
 test("getById - user does not exist", async () => {
   await expect(() => db.getById(idCreator.create())).rejects.toThrow(
     NotFoundError
