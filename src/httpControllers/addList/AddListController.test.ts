@@ -9,7 +9,6 @@ import {
 } from "../__test__/fixtures";
 import AddListController from ".";
 import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
-import UserNotFoundError from "../../usecases/addList/UserNotFoundError";
 
 Clock.inst = new FakeClock({ currentTime: new Date("2020-01-01") });
 let addListCtrl: AddListController;

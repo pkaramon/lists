@@ -1,8 +1,6 @@
 import IdConverter from "../../dataAccess/IdConverter";
 import Id from "../../domain/Id";
 import InvalidListItemIndexError from "../../usecases/InvalidListItemIndexError";
-import ListNotFoundError from "../../usecases/ListNotFoundError";
-import UserNoAccessError from "../../usecases/UserNoAccessError";
 import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import { errorToResponse } from "../defaultResponsesToErrors";
