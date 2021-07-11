@@ -71,3 +71,17 @@ test("in case of mongo errors it should throw DatabaseError", async () => {
     DatabaseError
   );
 });
+
+test("deleteById - list does not exist", async () => {
+  await expect(() => db.deleteById(listData.id)).rejects.toThrowError(
+    NotFoundError
+  );
+});
+
+test("deleteById - list exists", async () => {
+  await db.save(new List(listData));
+  await db.deleteById(listData.id);
+  await expect(() => db.getById(listData.id)).rejects.toThrowError(
+    NotFoundError
+  );
+});

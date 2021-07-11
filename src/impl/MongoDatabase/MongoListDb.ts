@@ -1,5 +1,6 @@
 import IdConverter from "../../dataAccess/IdConverter";
 import ListDb from "../../dataAccess/ListDb";
+import NotFoundError from "../../dataAccess/NotFoundError";
 import Id from "../../domain/Id";
 import List from "../../domain/List";
 import ListItemGateway from "../../domain/ListItemGateway";
@@ -27,6 +28,14 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
     }
   ) {
     super(data);
+  }
+
+  @mongoDbErrorsGuard
+  async deleteById(id: Id): Promise<void> {
+    const collection = await this.getCollection();
+    const record = await collection.deleteOne({ _id: id.toString() });
+    const nDeleted = record.result.n ?? 0;
+    if (nDeleted === 0) throw new NotFoundError();
   }
 
   @mongoDbErrorsGuard
