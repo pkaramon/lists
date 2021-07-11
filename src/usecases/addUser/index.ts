@@ -29,14 +29,14 @@ export default function buildAddUser({
     ) {}
 
     async execute() {
-      await this.checkIfEmailIsAlreadyUsed();
+      await this.checkIfEmailIsAlreadyTaken();
       this.validatePassword();
       const user = await this.createUser();
       await this.saveUser(user);
       return { userId: user.id };
     }
 
-    private async checkIfEmailIsAlreadyUsed() {
+    private async checkIfEmailIsAlreadyTaken() {
       if (await this.isEmailAlreadyTaken()) throw new EmailAlreadyTakenError();
     }
 

@@ -3,13 +3,10 @@ import List from "../../domain/List";
 import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import UserDb from "../../dataAccess/UserDb";
-import NotFoundError from "../../dataAccess/NotFoundError";
 import InvalidListDataError from "./InvalidListDataError";
-import UserNotFoundError from "./UserNotFoundError";
 import IdCreator from "../../dataAccess/IdCreator";
 
 export default function buildAddList({
-  userDb,
   idCreator,
   listDb,
 }: {
@@ -26,19 +23,9 @@ export default function buildAddList({
     ) {}
 
     async execute() {
-      await this.checkIfUserExists();
       const list = this.createList();
       await this.saveList(list);
       return { listId: list.id };
-    }
-
-    private async checkIfUserExists() {
-      try {
-        await userDb.getById(this.data.userId);
-      } catch (e) {
-        if (e instanceof NotFoundError) throw new UserNotFoundError();
-        else throw new ServerError();
-      }
     }
 
     private createList() {

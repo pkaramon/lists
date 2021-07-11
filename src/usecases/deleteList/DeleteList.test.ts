@@ -61,12 +61,8 @@ test("database error", async () => {
     throw new DatabaseError();
   };
   listDb.deleteById = throwDbError;
-
   await expectDeleteListToThrow(
-    {
-      listId: new NumberId(1),
-      userId: new NumberId(100),
-    },
+    { listId: new NumberId(1), userId: new NumberId(100) },
     ServerError
   );
 });
