@@ -15,6 +15,7 @@ export default function buildDeleteListItem({ listDb }: { listDb: ListDb }) {
     protected perform(list: List) {
       try {
         list.removeListItemAt(this.data.listItemIndex);
+        return this.saveList(list)
       } catch {
         throw new InvalidListItemIndexError();
       }

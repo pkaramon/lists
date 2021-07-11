@@ -24,6 +24,7 @@ export default function buildChangeListItemTitle({
     protected perform(list: List) {
       const listItem = this.getListItem(list);
       listItem.changeTitle(this.data.title);
+      return this.saveList(list)
     }
 
     private getListItem(list: List) {

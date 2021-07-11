@@ -19,6 +19,7 @@ export default function buildAddListItem({
     protected perform(list: List) {
       const listItem = listItemFactory.fromDataToObject(this.data.listItem);
       list.addListItem(listItem);
+      return this.saveList(list)
     }
   };
 }

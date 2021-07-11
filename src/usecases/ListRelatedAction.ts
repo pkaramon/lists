@@ -13,7 +13,6 @@ export default abstract class ListRelatedAction {
     const list = await this.getList();
     this.checkIfUserHasAccess(list);
     const result = await this.perform(list);
-    await this.saveList(list);
     return result;
   }
 
@@ -32,7 +31,7 @@ export default abstract class ListRelatedAction {
 
   protected abstract perform(list: List): any | Promise<any>;
 
-  private async saveList(list: List) {
+  protected async saveList(list: List) {
     try {
       await this.listDb.save(list);
     } catch (e) {
