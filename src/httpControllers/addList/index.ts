@@ -1,5 +1,5 @@
 import Id from "../../domain/Id";
-import InvalidListDataError from "../../usecases/addList/InvalidListDataError";
+import InvalidListDataError from "../../usecases/InvalidListDataError";
 import AuthHttpRequest from "../AuthHttpRequest";
 import DataResponse from "../DataResponse";
 import { errorToResponse } from "../defaultResponsesToErrors";

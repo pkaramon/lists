@@ -3,7 +3,7 @@ import List from "../../domain/List";
 import ListDb from "../../dataAccess/ListDb";
 import ServerError from "../ServerError";
 import UserDb from "../../dataAccess/UserDb";
-import InvalidListDataError from "./InvalidListDataError";
+import InvalidListDataError from "../InvalidListDataError";
 import IdCreator from "../../dataAccess/IdCreator";
 
 export default function buildAddList({

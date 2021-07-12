@@ -10,7 +10,7 @@ export default class List {
     private data: { id: Id; authorId: Id; title: string; description: string }
   ) {
     this.cleanData();
-    this.validateTitle();
+    this.validateTitle(data.title);
   }
 
   get id() {
@@ -53,12 +53,21 @@ export default class List {
     return this.listItems.getAt(index);
   }
 
+  changeTitle(newTitle: string) {
+    this.validateTitle(newTitle);
+    this.data.title = newTitle;
+  }
+
+  changeDescription(newDescription: string) {
+    this.data.description = newDescription;
+  }
+
   private cleanData() {
     this.data.title = this.data.title.trim();
     this.data.description = this.data.description.trim();
   }
 
-  private validateTitle() {
-    if (this.data.title.length === 0) throw new ValidationError("empty title");
+  private validateTitle(title: string) {
+    if (title.trim().length === 0) throw new ValidationError("empty title");
   }
 }

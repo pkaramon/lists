@@ -10,7 +10,7 @@ import {
 } from "../../fakes";
 import ServerError from "../ServerError";
 import buildAddList from ".";
-import InvalidListDataError from "./InvalidListDataError";
+import InvalidListDataError from "../InvalidListDataError";
 import User from "../../domain/User";
 
 let userDb: UserDbMemory;
