@@ -7,14 +7,14 @@ import ObjectValidator, {
   InvalidDataError,
   InvalidDataFormatError,
 } from "../ObjectValidator";
-import Shape from "../Shape";
+import { ObjectShape } from "../validationPrimitives";
 
 interface ControllerClass extends HttpControllerConstructor {
-  requestBodyShape: Shape;
+  requestBodyShape: ObjectShape;
 }
 
 interface ObjectValidatorConstructor {
-  new (shape: Shape): ObjectValidator<any>;
+  new (shape: ObjectShape): ObjectValidator<any>;
 }
 
 export default function buildRequestBodyValidator(

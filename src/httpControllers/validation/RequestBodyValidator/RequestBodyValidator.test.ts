@@ -7,17 +7,17 @@ import {
   expectStatusCodeToBe,
 } from "../../__test__/fixtures";
 import ObjectValidatorYup from "../ObjectValidatorYup";
+import T from "../types";
 import buildRequestBodyValidator from "./RequestBodyValidator";
-
 
 const RequestBodyValidator = buildRequestBodyValidator(ObjectValidatorYup);
 
 @RequestBodyValidator
 class Controller {
   static requestBodyShape = {
-    name: String,
-    age: Number,
-    birthDate: Date,
+    name: T.string(),
+    age: T.number(),
+    birthDate: T.date(),
   };
 
   async handle(

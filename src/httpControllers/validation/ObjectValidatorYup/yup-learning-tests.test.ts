@@ -89,11 +89,7 @@ test("nested object is not an object", async () => {
 
 test("casts", async () => {
   const value = await schema.validate(
-    {
-      name: 2,
-      age: "42",
-      address: { street: false, city: 3.14 },
-    },
+    { name: 2, age: "42", address: { street: false, city: 3.14 } },
     { abortEarly: false }
   );
   expect(value.name).toBe("2");
@@ -110,4 +106,24 @@ test("strict", async () => {
   expect(await schema.isValid({ name: "bob", age: 42 })).toBe(true);
   expect(await schema.isValid({ name: 42, age: 42 })).toBe(false);
   expect(await schema.isValid({ name: "bob", age: "42" })).toBe(false);
+});
+
+test("optional object schemas", async () => {
+  const schema = yup.object().shape({
+    details: yup
+      .object()
+      .shape({
+        name: yup.string().nullable(),
+        age: yup.number(),
+      })
+      .nullable(),
+  });
+
+  expect(await schema.isValid({})).toBe(true);
+  expect(await schema.isValid({ details: null })).toBe(true);
+  expect(await schema.isValid({ details: { name: "bob", age: 32 } })).toBe(
+    true
+  );
+
+  expect(await schema.isValid({ details: { age: 32 } })).toBe(true);
 });

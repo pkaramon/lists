@@ -1,12 +1,12 @@
+import * as yup from "yup";
 import ObjectValidator, {
   InvalidDataError,
   InvalidDataFormatError,
 } from "../ObjectValidator";
-import Shape, { ShapeType } from "../Shape";
-import * as yup from "yup";
-import FromShape from "../FromShape";
+import { ObjectShape, ValueDescriptorType } from "../validationPrimitives";
+import { FromTypes } from "../types";
 
-export default class ObjectValidatorYup<S extends Shape>
+export default class ObjectValidatorYup<S extends ObjectShape>
   implements ObjectValidator<S>
 {
   private yupSchema: yup.ObjectSchema<any>;
@@ -30,7 +30,7 @@ export default class ObjectValidatorYup<S extends Shape>
 
   private async getResult(data: any) {
     const result = await this.yupSchema.validate(data, { abortEarly: false });
-    return result as FromShape<S>;
+    return result as any as FromTypes<S>;
   }
 
   private handleYupValidationError(e: any): never {
@@ -38,27 +38,36 @@ export default class ObjectValidatorYup<S extends Shape>
     throw new InvalidDataError(error.inner.map((e) => e.path!));
   }
 
-  private createYupSchema(shape: Shape) {
+  private createYupSchema(shape: ObjectShape) {
     const yupShape: any = {};
     for (const key in shape) {
-      const type = shape[key];
-      yupShape[key] = this.dispatchTypeToYupSchema(type);
+      const valueDescriptor = shape[key];
+      const schema = this.dispatchTypeToYupSchema(valueDescriptor.type);
+      yupShape[key] = this.applyOptions(valueDescriptor.options, schema);
     }
     return yup.object().shape(yupShape);
   }
 
-  private dispatchTypeToYupSchema(type: Shape | ShapeType) {
+  private dispatchTypeToYupSchema(type: ValueDescriptorType) {
     switch (type) {
       case String:
-        return yup.string().strict().required();
+        return yup.string().strict();
       case Number:
-        return yup.number().strict().required();
+        return yup.number().strict();
       case Boolean:
-        return yup.boolean().strict().required();
+        return yup.boolean().strict();
       case Date:
-        return yup.date().required();
+        return yup.date();
       default:
-        return this.createYupSchema(type as Shape);
+        return this.createYupSchema(type as ObjectShape);
+    }
+  }
+
+  private applyOptions(options: any, schema: yup.BaseSchema<any>) {
+    if (options.optional) {
+      return schema.nullable().default(null);
+    } else {
+      return schema.required();
     }
   }
 }

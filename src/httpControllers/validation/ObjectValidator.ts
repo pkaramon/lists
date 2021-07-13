@@ -1,8 +1,7 @@
-import FromShape from "./FromShape";
-import Shape from "./Shape";
+import { ObjectShape, Result } from "./validationPrimitives";
 
-export default interface ObjectValidator<ShapeType extends Shape> {
-  validate(obj: any): Promise<FromShape<ShapeType>>;
+export default interface ObjectValidator<ShapeType extends ObjectShape> {
+  validate(obj: any): Promise<Result<ShapeType>>;
 }
 
 export class InvalidDataFormatError extends Error {
