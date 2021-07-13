@@ -5,7 +5,7 @@ import DataResponse from "../DataResponse";
 import { errorToResponse } from "../defaultResponsesToErrors";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromShape from "../validation/FromShape";
+import T, {FromTypes} from "../validation/types";
 
 type ViewListUseCase = UseCaseClass<
   { userId: Id; listId: Id },
@@ -13,11 +13,11 @@ type ViewListUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = AuthHttpRequest<
-  FromShape<typeof ViewListController.requestBodyShape>
+  FromTypes<typeof ViewListController.requestBodyShape>
 >;
 
 export default class ViewListController {
-  static requestBodyShape = { listId: String };
+  static requestBodyShape = { listId: T.string() };
 
   constructor(
     private ViewList: ViewListUseCase,

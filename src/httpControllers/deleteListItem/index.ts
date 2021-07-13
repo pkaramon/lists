@@ -7,7 +7,7 @@ import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromShape from "../validation/FromShape";
+import T, {FromTypes} from "../validation/types";
 
 type DeleteListItemUseCase = UseCaseClass<{
   userId: Id;
@@ -16,13 +16,13 @@ type DeleteListItemUseCase = UseCaseClass<{
 }>;
 
 type ControllerRequest = AuthHttpRequest<
-  FromShape<typeof DeleteListItemController.requestBodyShape>
+  FromTypes<typeof DeleteListItemController.requestBodyShape>
 >;
 
 export default class DeleteListItemController {
   static requestBodyShape = {
-    listId: String,
-    listItemIndex: Number,
+    listId: T.string(),
+    listItemIndex: T.number(),
   };
 
   constructor(

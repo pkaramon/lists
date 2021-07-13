@@ -7,7 +7,7 @@ import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromShape from "../validation/FromShape";
+import T, {FromTypes} from "../validation/types";
 
 type AddUserUseCase = UseCaseClass<
   { name: string; email: string; password: string; birthDate: Date },
@@ -15,15 +15,15 @@ type AddUserUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = HttpRequest<
-  FromShape<typeof AddUserController.requestBodyShape>
+  FromTypes<typeof AddUserController.requestBodyShape>
 >;
 
 export default class AddUserController {
   static requestBodyShape = {
-    name: String,
-    password: String,
-    email: String,
-    birthDate: Date,
+    name: T.string(),
+    password: T.string(),
+    email: T.string(),
+    birthDate: T.date(),
   };
 
   constructor(private AddUser: AddUserUseCase) {}

@@ -5,7 +5,7 @@ import ErrorResponse from "../ErrorResponse";
 import HttpRequest from "../HttpRequest";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromShape from "../validation/FromShape";
+import T, { FromTypes } from "../validation/types";
 
 type LoginUseCase = UseCaseClass<
   { email: string; password: string },
@@ -13,13 +13,13 @@ type LoginUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = HttpRequest<
-  FromShape<typeof LoginController.requestBodyShape>
+  FromTypes<typeof LoginController.requestBodyShape>
 >;
 
 export default class LoginController {
   static requestBodyShape = {
-    email: String,
-    password: String,
+    email: T.string(),
+    password: T.string(),
   };
 
   constructor(private Login: LoginUseCase) {}

@@ -6,7 +6,7 @@ import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
-import FromShape from "../validation/FromShape";
+import T, { FromTypes } from "../validation/types";
 
 type AddListUseCase = UseCaseClass<
   { userId: Id; list: { title: string; description: string } },
@@ -14,13 +14,13 @@ type AddListUseCase = UseCaseClass<
 >;
 
 type ControllerRequest = AuthHttpRequest<
-  FromShape<typeof AddListController.requestBodyShape>
+  FromTypes<typeof AddListController.requestBodyShape>
 >;
 
 export default class AddListController {
   static requestBodyShape = {
-    title: String,
-    description: String,
+    title: T.string(),
+    description: T.string(),
   };
 
   constructor(private AddList: AddListUseCase) {}

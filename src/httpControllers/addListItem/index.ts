@@ -7,6 +7,7 @@ import { errorToResponse } from "../defaultResponsesToErrors";
 import ErrorResponse from "../ErrorResponse";
 import StatusCode from "../StatusCode";
 import UseCaseClass from "../UseCaseClass";
+import T from "../validation/types";
 
 type AddListItemUseCase = UseCaseClass<{
   userId: Id;
@@ -14,17 +15,17 @@ type AddListItemUseCase = UseCaseClass<{
   listItem: any;
 }>;
 
-type Request = AuthHttpRequest<{
+type ControllerRequest = AuthHttpRequest<{
   listId: string;
   listItem: any;
 }>;
 
 export default class AddListItemController {
   static requestBodyShape = {
-    listId: String,
-    listItem: {
-      title: String,
-    },
+    listId: T.string(),
+    listItem: T.object({
+      title: T.string(),
+    }),
   };
 
   constructor(
@@ -32,7 +33,7 @@ export default class AddListItemController {
     private idConverter: IdConverter
   ) {}
 
-  async handle(req: Request) {
+  async handle(req: ControllerRequest) {
     try {
       await this.tryToAddListItem(req);
       return this.generateSuccessfulResponse();
@@ -41,7 +42,7 @@ export default class AddListItemController {
     }
   }
 
-  private async tryToAddListItem(req: Request) {
+  private async tryToAddListItem(req: ControllerRequest) {
     await new this.AddListItem({
       userId: req.auth.userId,
       listId: this.idConverter.convert(req.body.listId),
