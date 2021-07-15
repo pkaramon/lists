@@ -95,3 +95,26 @@ test("deleteById - list exists", async () => {
     NotFoundError
   );
 });
+
+test("getListsMadeBy - user has no lists", async () => {
+  const lists = await db.getListsMadeBy(
+    new UUID("06bb96cf-c44f-4759-b5c7-132d29f44c1a")
+  );
+  expect(lists.length).toBe(0);
+});
+
+test("getListsMadeBy - user has lists", async () => {
+  await db.save(new List(listData));
+  await db.save(
+    new List({
+      ...listData,
+      id: new UUID("e8420e0d-fe0f-45d4-a455-28da56176459"),
+      title: "second title",
+    })
+  );
+
+  const lists = await db.getListsMadeBy(listData.authorId);
+  expect(lists.length).toBe(2);
+  const titles = lists.map((list) => list.title);
+  expect(titles).toEqual(["first title", "second title"]);
+});

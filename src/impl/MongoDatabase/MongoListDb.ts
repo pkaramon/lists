@@ -54,12 +54,13 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
     return this.fromListDataToList(listData);
   }
 
-  private getListItemsData(list: List) {
-    const listItemsData = [];
-    for (const li of list) {
-      listItemsData.push(this.utils.listItemGateway.fromObjectToData(li));
-    }
-    return listItemsData;
+  @mongoDbErrorsGuard
+  async getListsMadeBy(authorId: Id): Promise<List[]> {
+    const collection = await this.getCollection();
+    const listsData = await collection
+      .find({ authorId: authorId.toString() })
+      .toArray();
+    return listsData.map((ld) => this.fromListDataToList(ld));
   }
 
   private fromListToListData(list: List) {
@@ -70,6 +71,14 @@ export default class MongoListDb extends MongoDb<ListData> implements ListDb {
       title: list.title,
       listItems: this.getListItemsData(list),
     };
+  }
+
+  private getListItemsData(list: List) {
+    const listItemsData = [];
+    for (const li of list) {
+      listItemsData.push(this.utils.listItemGateway.fromObjectToData(li));
+    }
+    return listItemsData;
   }
 
   private fromListDataToList(listData: ListData) {
