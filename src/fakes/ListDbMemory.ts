@@ -23,4 +23,9 @@ export default class ListDbMemory implements ListDb {
       throw new NotFoundError("list with that id does not exist");
     this.lists.delete(id.toString());
   }
+
+  async getListsMadeBy(authorId: Id) {
+    const allLists = Array.from(this.lists.values());
+    return allLists.filter((list) => list.authorId.equals(authorId));
+  }
 }
