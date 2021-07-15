@@ -2,8 +2,11 @@ import ListItemGatewayImp from "../domain/ListItemGateway/ListItemGatewayImp";
 import AddListController from "../httpControllers/addList";
 import AddListItemController from "../httpControllers/addListItem";
 import AddUserController from "../httpControllers/addUser";
+import ChangeListDetailsController from "../httpControllers/changeListDetails";
 import ChangeListItemTitleController from "../httpControllers/changeListItemTitle";
+import DeleteListController from "../httpControllers/deleteList";
 import DeleteListItemController from "../httpControllers/deleteListItem";
+import DeleteUserController from "../httpControllers/deleteUser";
 import LoginController from "../httpControllers/login";
 import buildUserAuthDecorator from "../httpControllers/UserAuthDecorator";
 import ObjectValidatorYup from "../httpControllers/validation/ObjectValidatorYup";
@@ -19,8 +22,11 @@ import UUIDCreator from "../impl/UUID/UUIDCreator";
 import buildAddList from "../usecases/addList";
 import buildAddListItem from "../usecases/addListItem";
 import buildAddUser from "../usecases/addUser";
+import buildChangeListDetails from "../usecases/changeListDetails";
 import buildChangeListItemTitle from "../usecases/changeListItemTitle";
+import buildDeleteList from "../usecases/deleteList";
 import buildDeleteListItem from "../usecases/deleteListItem";
+import buildDeleteUser from "../usecases/deleteUser";
 import buildLogin from "../usecases/login";
 import buildViewList from "../usecases/viewList";
 
@@ -111,10 +117,32 @@ export function setupLoginController() {
   return new Controller(Login);
 }
 
-export function setupViewList() {
+export function setupViewListController() {
   const ViewList = buildViewList({ listDb, listItemGateway });
   const Controller = UserAuthDecorator(
     RequestBodyValidator(ViewListController)
   );
   return new Controller(ViewList, idConverter);
+}
+
+export function setupChangeListDetailsController() {
+  const ChangeListDetails = buildChangeListDetails({ listDb });
+  const Controller = UserAuthDecorator(
+    RequestBodyValidator(ChangeListDetailsController)
+  );
+  return new Controller(ChangeListDetails, idConverter);
+}
+
+export function setupDeleteUserController() {
+  const DeleteUser = buildDeleteUser({ userDb });
+  const Controller = UserAuthDecorator(DeleteUserController);
+  return new Controller(DeleteUser);
+}
+
+export function setupDeleteListController() {
+  const DeleteList = buildDeleteList({ listDb });
+  const Controller = UserAuthDecorator(
+    RequestBodyValidator(DeleteListController)
+  );
+  return new Controller(DeleteList, idConverter);
 }

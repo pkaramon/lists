@@ -57,10 +57,9 @@ test("delete list from db", async () => {
 });
 
 test("database error", async () => {
-  const throwDbError = async () => {
+  listDb.deleteById = async () => {
     throw new DatabaseError();
   };
-  listDb.deleteById = throwDbError;
   await expectDeleteListToThrow(
     { listId: new NumberId(1), userId: new NumberId(100) },
     ServerError

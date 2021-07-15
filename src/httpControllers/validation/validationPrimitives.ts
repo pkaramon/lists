@@ -26,7 +26,7 @@ type Constructor<T> = new (...args: any) => T;
 
 export type Result<Shape extends ObjectShape> = {
   [key in keyof Shape]: Shape[key]["options"]["optional"] extends true
-    ? GetTypeFromTypeDescriptor<Shape[key]> | undefined
+    ? GetTypeFromTypeDescriptor<Shape[key]> | null | undefined
     : GetTypeFromTypeDescriptor<Shape[key]>;
 };
 

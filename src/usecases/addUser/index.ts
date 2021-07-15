@@ -46,7 +46,7 @@ export default function buildAddUser({
         return true;
       } catch (e) {
         if (e instanceof NotFoundError) return false;
-        else this.throwServerError();
+        else throw new ServerError()
       }
     }
 
@@ -77,12 +77,8 @@ export default function buildAddUser({
       try {
         await userDb.save(user);
       } catch (e) {
-        if (e instanceof DatabaseError) this.throwServerError();
+        if (e instanceof DatabaseError) throw new ServerError();
       }
-    }
-
-    private throwServerError(): never {
-      throw new ServerError("server error");
     }
   };
 }

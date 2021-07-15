@@ -18,13 +18,26 @@ class ErrorsToDefaultResponses {
     this.map.set(errorConstructor, handler);
   }
 
-  static getResponseFor(error: Error) {
-    const handlerOrResponse = this.map.get(error.constructor);
+  static getResponseFor(error: Error): HttpResponse {
+    const handlerOrResponse = this.getHandler(error) ?? this.defaultHandler;
     if (typeof handlerOrResponse === "function")
       return handlerOrResponse(error);
     else return handlerOrResponse;
   }
+
+  private static getHandler(error: any) {
+    return this.map.get(error.constructor);
+  }
+
+  private static get defaultHandler() {
+    return this.map.get(ServerError);
+  }
 }
+
+ErrorsToDefaultResponses.add(
+  ServerError,
+  new ErrorResponse(StatusCode.InternalServerError, "server error")
+);
 
 ErrorsToDefaultResponses.add(
   UserNoAccessError,
@@ -34,9 +47,4 @@ ErrorsToDefaultResponses.add(
 ErrorsToDefaultResponses.add(
   ListNotFoundError,
   new ErrorResponse(StatusCode.NotFound, "list not found")
-);
-
-ErrorsToDefaultResponses.add(
-  ServerError,
-  new ErrorResponse(StatusCode.InternalServerError, "server error")
 );

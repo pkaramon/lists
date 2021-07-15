@@ -4,10 +4,13 @@ import {
   setupAddListController,
   setupAddListItemController,
   setupAddUserController,
-  setupViewList,
+  setupViewListController,
   setupDeleteListItemController,
   setupChangeListItemTitleController,
   setupLoginController,
+  setupChangeListDetailsController,
+  setupDeleteUserController,
+  setupDeleteListController,
 } from "./controllers";
 
 const app = express();
@@ -33,7 +36,7 @@ app.post(
   httpControllerToExpress(setupAddListItemController())
 );
 app.post("/add-user", httpControllerToExpress(setupAddUserController()));
-app.get("/view-list", httpControllerToExpress(setupViewList()));
+app.get("/view-list", httpControllerToExpress(setupViewListController()));
 app.post(
   "/delete-list-item",
   httpControllerToExpress(setupDeleteListItemController())
@@ -43,6 +46,12 @@ app.post(
   httpControllerToExpress(setupChangeListItemTitleController())
 );
 app.post("/login", httpControllerToExpress(setupLoginController()));
+app.post(
+  "/change-list-details",
+  httpControllerToExpress(setupChangeListDetailsController())
+);
+app.post("/delete-user", httpControllerToExpress(setupDeleteUserController()));
+app.post("/delete-list", httpControllerToExpress(setupDeleteListController()));
 
 app.listen(3000, () => {
   console.log("server is running");
